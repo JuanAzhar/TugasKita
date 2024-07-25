@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 	dto "tugaskita/features/user/dto"
-	middleware "tugaskita/utils/jwt"
 	"tugaskita/features/user/entity"
+	middleware "tugaskita/utils/jwt"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -93,7 +93,7 @@ func (handler *UserController) DeleteUser(e echo.Context) error {
 }
 
 func (handler *UserController) ReadSpecificUser(e echo.Context) error {
-	
+
 	idParamstr := e.Param("id")
 
 	idParams, err := uuid.Parse(idParamstr)
@@ -131,7 +131,7 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 			"message": err.Error(),
 		})
 	}
-	
+
 	idcheck := userId
 
 	idCheck, err := uuid.Parse(idcheck)
@@ -161,7 +161,6 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 		"data":    response,
 	})
 }
-
 
 func (handler *UserController) ReadAllUser(e echo.Context) error {
 	_, role, err := middleware.ExtractTokenUserId(e)

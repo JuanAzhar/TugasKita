@@ -23,12 +23,8 @@ func (userUC *userUseCase) DeleteUser(id string) (err error) {
 		return errors.New("insert user id")
 	}
 
-	userData, err := userUC.userRepository.ReadSpecificUser(id)
-	if err != nil {
-		return errors.New("user not found")
-	}
-
-	if userData.ID == "" {
+	_, errFind := userUC.userRepository.ReadSpecificUser(id)
+	if errFind != nil {
 		return errors.New("user not found")
 	}
 
