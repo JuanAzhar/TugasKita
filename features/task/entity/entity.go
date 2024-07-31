@@ -7,15 +7,25 @@ import (
 )
 
 type TaskCore struct {
-	ID          uuid.UUID 
+	ID          uuid.UUID
 	AdminId     string
-	Title       string 
+	Title       string
 	Description string
 	Point       int
 	Message     string
-	Status      string 
-	Start_date  time.Time
-	End_date    time.Time
+	Status      string
+	Type        string
+	Start_date  string
+	End_date    string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+type UserTaskUploadCore struct {
+	Id          uuid.UUID
+	TaskId      string
+	UserId      string
+	Image       string
+	Description string
+	Status      string
 }

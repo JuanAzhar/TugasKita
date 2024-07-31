@@ -1,14 +1,16 @@
 package entity
 
-import "tugaskita/features/task/model"
-
 type TaskDataInterface interface {
 	CreateTask(input TaskCore) error
 	FindAllTask() ([]TaskCore, error)
 	FindById(taskId string) (TaskCore, error)
 	UpdateTask(taskId string, data TaskCore) error
 	DeleteTask(taskId string) error
-	UpdateTaskStatus(data model.Task) error
+	UpdateTaskStatus(taskId string, data UserTaskUploadCore) error
+
+	UploadTask(input UserTaskUploadCore) error
+	FindAllClaimedTask(userId string) ([]UserTaskUploadCore, error)
+	FindTasksNotClaimedByUser(userId string) ([]TaskCore, error)
 }
 
 type TaskUseCaseInterface interface {
@@ -17,5 +19,9 @@ type TaskUseCaseInterface interface {
 	FindById(taskId string) (TaskCore, error)
 	UpdateTask(taskId string, data TaskCore) error
 	DeleteTask(taskId string) error
-	UpdateTaskStatus(data model.Task) error
+	UpdateTaskStatus(taskId string, data UserTaskUploadCore) error
+
+	UploadTask(input UserTaskUploadCore) error
+	FindAllClaimedTask(userId string) ([]UserTaskUploadCore, error)
+	FindTasksNotClaimedByUser(userId string) ([]TaskCore, error)
 }

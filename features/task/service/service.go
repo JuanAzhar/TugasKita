@@ -4,7 +4,6 @@ import (
 	"errors"
 	"time"
 	"tugaskita/features/task/entity"
-	"tugaskita/features/task/model"
 )
 
 type taskService struct {
@@ -18,15 +17,15 @@ func NewTaskService(taskRepo entity.TaskDataInterface) entity.TaskUseCaseInterfa
 }
 
 // CreateTask implements entity.TaskUseCaseInterface.
-func (taskUC *taskService) CreateTask(input entity.TaskCore) error {
+func (taskUC *taskService) CreateTask(data entity.TaskCore) error {
 	layout := "2006-01-02"
 	currentTime := time.Now().Truncate(24 * time.Hour)
 
-	if input.Title == "" || input.Description == "" {
+	if data.Title == "" || data.Description == "" {
 		return errors.New("title and description can't empty")
 	}
 
-	start, errStart := time.Parse(layout, input.Start_date.String())
+	start, errStart := time.Parse(layout, data.Start_date)
 	if errStart != nil {
 		return errors.New("start date must be in 'yyyy-mm-dd' format")
 	}
@@ -34,7 +33,7 @@ func (taskUC *taskService) CreateTask(input entity.TaskCore) error {
 		return errors.New("please choose at least today")
 	}
 
-	end, errEnd := time.Parse(layout, input.End_date.String())
+	end, errEnd := time.Parse(layout, data.End_date)
 	if errEnd != nil {
 		return errors.New("end date must be in 'yyyy-mm-dd' format")
 	}
@@ -47,11 +46,11 @@ func (taskUC *taskService) CreateTask(input entity.TaskCore) error {
 		return errors.New("end date must be different from start date")
 	}
 
-	if input.Point <= 0{
+	if data.Point <= 0 {
 		return errors.New("point must be more than 0")
 	}
 
-	err := taskUC.TaskRepo.CreateTask(input)
+	err := taskUC.TaskRepo.CreateTask(data)
 	if err != nil {
 		return err
 	}
@@ -82,7 +81,7 @@ func (taskUC *taskService) DeleteTask(taskId string) error {
 func (taskUC *taskService) FindAllTask() ([]entity.TaskCore, error) {
 	data, err := taskUC.TaskRepo.FindAllTask()
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error get data")
 	}
 
 	return data, nil
@@ -105,10 +104,87 @@ func (taskUC *taskService) FindById(taskId string) (entity.TaskCore, error) {
 
 // UpdateTask implements entity.TaskCoreUseCaseInterface.
 func (taskUC *taskService) UpdateTask(taskId string, data entity.TaskCore) error {
-	panic("unimplemented")
+	layout := "2006-01-02"
+	currentTime := time.Now().Truncate(24 * time.Hour)
+
+	if data.Title == "" || data.Description == "" {
+		return errors.New("title and description can't empty")
+	}
+
+	start, errStart := time.Parse(layout, data.Start_date)
+	if errStart != nil {
+		return errors.New("start date must be in 'yyyy-mm-dd' format")
+	}
+	if start.Before(currentTime) {
+		return errors.New("please choose at least today")
+	}
+
+	end, errEnd := time.Parse(layout, data.End_date)
+	if errEnd != nil {
+		return errors.New("end date must be in 'yyyy-mm-dd' format")
+	}
+
+	if end.Before(start) {
+		return errors.New("end date must be after start date")
+	}
+
+	if end.Equal(start) {
+		return errors.New("end date must be different from start date")
+	}
+
+	if data.Point <= 0 {
+		return errors.New("point must be more than 0")
+	}
+
+	err := taskUC.TaskRepo.UpdateTask(taskId, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // UpdateTaskStatus implements entity.TaskUseCaseInterface.
-func (taskUC *taskService) UpdateTaskStatus(data model.Task) error {
-	panic("unimplemented")
+func (taskUC *taskService) UpdateTaskStatus(taskId string, data entity.UserTaskUploadCore) error {
+	err := taskUC.TaskRepo.UpdateTaskStatus(taskId, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// FindAllClaimedTask implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllClaimedTask(userId string) ([]entity.UserTaskUploadCore, error) {
+	data, err := taskUC.TaskRepo.FindAllClaimedTask(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// FindTasksNotClaimedByUser implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindTasksNotClaimedByUser(userId string) ([]entity.TaskCore, error) {
+	data, err := taskUC.TaskRepo.FindTasksNotClaimedByUser(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// UploadTask implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) UploadTask(data entity.UserTaskUploadCore) error {
+	_, errTask := taskUC.TaskRepo.FindById(data.TaskId)
+	if errTask != nil {
+		return errors.New("task not found")
+	}
+
+	err := taskUC.TaskRepo.UploadTask(data)
+	if err != nil {
+		return errors.New("failed upload task")
+	}
+
+	return nil
 }
