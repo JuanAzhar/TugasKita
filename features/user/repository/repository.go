@@ -48,14 +48,14 @@ func (userRepo *userRepository) Login(email string, password string) (entity.Use
 
 	if tx.RowsAffected > 0 {
 		var errToken error
-		token, errToken = utils.CreateToken(data.ID.String(), data.Role)
+		token, errToken = utils.CreateToken(data.ID, data.Role)
 		if errToken != nil {
 			return entity.UserCore{}, "", errToken
 		}
 	}
 
 	var resp = entity.UserCore{
-		ID:       data.ID.String(),
+		ID:       data.ID,
 		Name:     data.Name,
 		Email:    data.Email,
 		Password: data.Password,
@@ -73,7 +73,7 @@ func (userRepo *userRepository) ReadSpecificUser(id string) (user entity.UserCor
 	}
 
 	userCore := entity.UserCore{
-		ID:         data.ID.String(),
+		ID:         data.ID,
 		Name:       data.Name,
 		Email:      data.Email,
 		Point:      data.Point,
@@ -97,11 +97,11 @@ func (userRepo *userRepository) Register(data entity.UserCore) (row int, err err
 	}
 
 	var input = model.Users{
-		ID:       newUUID,
+		ID:       newUUID.String(),
 		Name:     data.Name,
 		Email:    data.Email,
 		Password: hashPassword,
-		Role: "user",
+		Role:     "user",
 	}
 
 	erruser := userRepo.db.Save(&input)
@@ -124,7 +124,7 @@ func (userRepo *userRepository) ReadAllUser() ([]entity.UserCore, error) {
 	mapData := make([]entity.UserCore, len(dataUser))
 	for i, value := range dataUser {
 		mapData[i] = entity.UserCore{
-			ID:         value.ID.String(),
+			ID:         value.ID,
 			Name:       value.Name,
 			Email:      value.Email,
 			Role:       value.Role,
@@ -133,4 +133,16 @@ func (userRepo *userRepository) ReadAllUser() ([]entity.UserCore, error) {
 		}
 	}
 	return mapData, nil
+}
+
+// UpdatePoint implements entity.UserDataInterface.
+func (userRepo *userRepository) UpdatePoint(id string, data entity.UserCore) error {
+	userData := entity.UserCoreToUserModel(data)
+
+	tx := userRepo.db.Where("id = ?", id).Updates(&userData)
+	if tx != nil{
+		return tx.Error
+	}
+
+	return nil
 }

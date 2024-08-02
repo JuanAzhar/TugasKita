@@ -188,3 +188,23 @@ func (taskUC *taskService) UploadTask(data entity.UserTaskUploadCore) error {
 
 	return nil
 }
+
+// FindUserTask implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllUserTask() ([]entity.UserTaskUploadCore, error) {
+	userTask, err := taskUC.TaskRepo.FindAllUserTask()
+	if err != nil {
+		return nil, errors.New("error get user task")
+	}
+
+	return userTask, nil
+}
+
+// FindUserTaskById implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindUserTaskById(id string) (entity.UserTaskUploadCore, error) {
+	task, err := taskUC.TaskRepo.FindUserTaskById(id)
+	if err != nil {
+		return entity.UserTaskUploadCore{}, err
+	}
+
+	return task, nil
+}

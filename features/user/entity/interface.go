@@ -7,6 +7,7 @@ type UserDataInterface interface{
 	ReadAllUser()([]UserCore, error)
 	ReadSpecificUser(id string) (user UserCore, err error)
 	DeleteUser(id string) (err error)
+	UpdatePoint(id string, data UserCore) error
 }
 
 type UserUseCaseInterface interface{

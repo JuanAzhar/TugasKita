@@ -132,9 +132,9 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 		})
 	}
 
-	idcheck := userId
+	println("user Id : " , userId)
 
-	idCheck, err := uuid.Parse(idcheck)
+	idCheck, err := uuid.Parse(userId)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "user not found",
@@ -144,7 +144,7 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 	data, err := handler.userUsecase.ReadSpecificUser(idCheck.String())
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": "error get specific user",
+			"message": "error get profile user",
 		})
 	}
 
@@ -157,7 +157,7 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"message": "get user",
+		"message": "get user profile",
 		"data":    response,
 	})
 }
@@ -200,3 +200,4 @@ func (handler *UserController) ReadAllUser(e echo.Context) error {
 		"data":    dataList,
 	})
 }
+

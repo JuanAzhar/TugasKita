@@ -261,9 +261,12 @@ func (handler *TaskController) UpdateTaskStatus(e echo.Context) error {
 		})
 	}
 
+	//get userId & taskId
+	dataTask, _ := handler.taskUsecase.FindUserTaskById(idParams)
+
 	status := entity.UserTaskUploadCore{
-		TaskId:      data.TaskId,
-		UserId:      data.UserId,
+		TaskId:      dataTask.TaskId,
+		UserId:      dataTask.UserId,
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
@@ -353,4 +356,83 @@ func (handler *TaskController) UploadTaskUser(e echo.Context) error {
 		"message": "succes upload task",
 		"data":    dataInput,
 	})
+}
+
+func (handler *TaskController) FindAllUserTask(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	data, err := handler.taskUsecase.FindAllUserTask()
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get all user task",
+		})
+	}
+
+	dataList := []entity.UserTaskUploadCore{}
+	for _, v := range data {
+		result := entity.UserTaskUploadCore{
+			Id:          v.Id,
+			TaskId:      v.TaskId,
+			UserId:      v.UserId,
+			Image:       v.Image,
+			Description: v.Description,
+			Status:      v.Status,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all user task",
+		"data":    dataList,
+	})
+}
+
+func (handler *TaskController) FindUserTaskById(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	idParams := e.Param("id")
+
+	data, err := handler.taskUsecase.FindUserTaskById(idParams)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get specific user",
+		})
+	}
+
+	response := dto.UserTaskUploadResponse{
+		Id:          data.Id.String(),
+		UserId:      data.UserId,
+		TaskId:      data.TaskId,
+		Image:       data.Image,
+		Description: data.Description,
+		Status:      data.Status,
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get user",
+		"data":    response,
+	})
+
 }
