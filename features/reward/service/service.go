@@ -2,16 +2,20 @@ package service
 
 import (
 	"errors"
+	"strconv"
 	"tugaskita/features/reward/entity"
+	user "tugaskita/features/user/entity"
 )
 
 type RewardService struct {
 	RewardRepo entity.RewardDataInterface
+	UserRepo user.UserDataInterface
 }
 
-func NewRewardService(rewardRepo entity.RewardDataInterface) entity.RewardUseCaseInterface {
+func NewRewardService(rewardRepo entity.RewardDataInterface, userRepo user.UserDataInterface) entity.RewardUseCaseInterface {
 	return &RewardService{
 		RewardRepo: rewardRepo,
+		UserRepo: userRepo,
 	}
 }
 
@@ -117,6 +121,25 @@ func (rewardUC *RewardService) FindAllUploadReward() ([]entity.UserRewardRequest
 // UploadRewardRequest implements entity.RewardUseCaseInterface.
 func (rewardUC *RewardService) UploadRewardRequest(input entity.UserRewardRequestCore) error {
 	//tambahin pengecekan point disini nanti
+	userData, errUser := rewardUC.UserRepo.ReadSpecificUser(input.UserId)
+	if errUser != nil {
+		return errors.New("failed get user")
+	}
+
+	userPoint, _ := strconv.Atoi(userData.Point)
+
+	rewardData, errReward := rewardUC.RewardRepo.FindById(input.RewardId)
+	if errReward != nil {
+		return errors.New("failed get reward")
+	}
+
+	if userPoint < rewardData.Price{
+		return errors.New("not enough point")
+	}
+
+	if rewardData.Stock < 1{
+		return errors.New("not enough stock")
+	}
 
 	err := rewardUC.RewardRepo.UploadRewardRequest(input)
 	if err != nil {

@@ -24,7 +24,9 @@ type TaskCore struct {
 type UserTaskUploadCore struct {
 	Id          uuid.UUID
 	TaskId      string
+	TaskName    string
 	UserId      string
+	UserName    string
 	Image       string
 	Description string
 	Status      string

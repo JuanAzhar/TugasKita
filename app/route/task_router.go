@@ -3,8 +3,9 @@ package route
 import (
 	"tugaskita/features/task/handler"
 	"tugaskita/features/task/repository"
-	userRepo "tugaskita/features/user/repository"
 	"tugaskita/features/task/service"
+	userRepo "tugaskita/features/user/repository"
+	userService "tugaskita/features/user/service"
 	m "tugaskita/utils/jwt"
 
 	"github.com/labstack/echo/v4"
@@ -13,10 +14,11 @@ import (
 
 func TaskRouter(db *gorm.DB, e *echo.Group) {
 	userRepository := userRepo.New(db)
+	userUseCase := userService.New(userRepository)
 
 	taskRepository := repository.NewTaskRepository(db, userRepository)
 	taskUseCase := service.NewTaskService(taskRepository)
-	taskController := handler.New(taskUseCase)
+	taskController := handler.New(taskUseCase, userUseCase)
 
 	user := e.Group("/user-task")
 	user.GET("/:id", taskController.ReadSpecificTask, m.JWTMiddleware())

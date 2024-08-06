@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"tugaskita/features/task/dto"
 	"tugaskita/features/task/entity"
+	user "tugaskita/features/user/entity"
 	middleware "tugaskita/utils/jwt"
 
 	"github.com/google/uuid"
@@ -12,11 +13,13 @@ import (
 
 type TaskController struct {
 	taskUsecase entity.TaskUseCaseInterface
+	userUsecase user.UserUseCaseInterface
 }
 
-func New(taskUC entity.TaskUseCaseInterface) *TaskController {
+func New(taskUC entity.TaskUseCaseInterface, userUC user.UserUseCaseInterface) *TaskController {
 	return &TaskController{
 		taskUsecase: taskUC,
+		userUsecase: userUC,
 	}
 }
 
@@ -379,10 +382,16 @@ func (handler *TaskController) FindAllUserTask(e echo.Context) error {
 
 	dataList := []entity.UserTaskUploadCore{}
 	for _, v := range data {
+
+		userData, _ := handler.userUsecase.ReadSpecificUser(v.UserId)
+		taskData, _ := handler.taskUsecase.FindById(v.TaskId)
+
 		result := entity.UserTaskUploadCore{
 			Id:          v.Id,
 			TaskId:      v.TaskId,
+			TaskName:    taskData.Title,
 			UserId:      v.UserId,
+			UserName:    userData.Name,
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,

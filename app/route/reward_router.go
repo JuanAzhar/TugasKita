@@ -18,7 +18,7 @@ func RewardRouter(db *gorm.DB, e *echo.Group) {
 	userUseCase := userS.New(userRepository)
 
 	rewardRepository := repository.NewRewardRepository(db, userRepository)
-	rewardUseCase := service.NewRewardService(rewardRepository)
+	rewardUseCase := service.NewRewardService(rewardRepository, userRepository)
 	rewardController := handler.New(rewardUseCase, userUseCase)
 
 	user := e.Group("/user-reward")

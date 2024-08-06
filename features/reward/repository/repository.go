@@ -206,6 +206,12 @@ func (rewardRepo *RewardRepository) UpdateReqRewardStatus(rewardId string, data 
 			return errors.New("not enough point")
 		}
 
+		if pointReward.Stock < 1 {
+			rewardData.Status = "Review"
+			rewardRepo.db.Where("id=?", rewardId).Updates(rewardData)
+			return errors.New("not enough stock")
+		}
+
 		userData.Point = strconv.Itoa(count)
 
 		saveUser := user.UserModelToUserCore(userData)
