@@ -97,3 +97,13 @@ func (userUC *userUseCase) ReadAllUser() ([]entity.UserCore, error) {
 
 	return users, nil
 }
+
+// GetRankUser implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) GetRankUser() ([]entity.UserCore, error) {
+	users, err := userUC.userRepository.GetRankUser()
+	if err != nil {
+		return nil, errors.New("error get data")
+	}
+
+	return users, nil
+}

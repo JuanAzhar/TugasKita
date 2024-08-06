@@ -201,3 +201,25 @@ func (handler *UserController) ReadAllUser(e echo.Context) error {
 	})
 }
 
+func (handler *UserController) GetRankUser(e echo.Context) error{
+	data, err := handler.userUsecase.GetRankUser()
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get all user",
+		})
+	}
+
+	dataList := []dto.UserRankResponse{}
+	for _, v := range data {
+		result := dto.UserRankResponse{
+			Name:       v.Name,
+			Point:      v.Point,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all user rank",
+		"data":    dataList,
+	})
+}

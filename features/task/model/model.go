@@ -29,3 +29,13 @@ type UserTaskUpload struct {
 	Description string
 	Status      string `gorm:"type:varchar(20);default:'review'" json:"status"`
 }
+
+type UserTaskSubmission struct {
+	Id          uuid.UUID
+	Title       string
+	UserId      string
+	Image       string
+	Description string
+	Point       int
+	Status      string `gorm:"type:varchar(20);default:'review'" json:"status"`
+}

@@ -101,6 +101,7 @@ func (userRepo *userRepository) Register(data entity.UserCore) (row int, err err
 		Name:     data.Name,
 		Email:    data.Email,
 		Password: hashPassword,
+		Point:    "0",
 		Role:     "user",
 	}
 
@@ -140,9 +141,32 @@ func (userRepo *userRepository) UpdatePoint(id string, data entity.UserCore) err
 	userData := entity.UserCoreToUserModel(data)
 
 	tx := userRepo.db.Where("id = ?", id).Updates(&userData)
-	if tx != nil{
+	if tx != nil {
 		return tx.Error
 	}
 
 	return nil
+}
+
+// GetRankUser implements entity.UserDataInterface.
+func (userRepo *userRepository) GetRankUser() ([]entity.UserCore, error) {
+	var dataUser []model.Users
+
+	errData := userRepo.db.Order("point desc").Find(&dataUser).Error
+	if errData != nil {
+		return nil, errData
+	}
+
+	mapData := make([]entity.UserCore, len(dataUser))
+	for i, value := range dataUser {
+		mapData[i] = entity.UserCore{
+			ID:         value.ID,
+			Name:       value.Name,
+			Email:      value.Email,
+			Role:       value.Role,
+			Point:      value.Point,
+			TotalPoint: value.TotalPoint,
+		}
+	}
+	return mapData, nil
 }

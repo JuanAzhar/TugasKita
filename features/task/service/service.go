@@ -85,7 +85,6 @@ func (taskUC *taskService) FindAllTask() ([]entity.TaskCore, error) {
 	}
 
 	return data, nil
-
 }
 
 // FindById implements entity.TaskCoreUseCaseInterface.
@@ -181,6 +180,10 @@ func (taskUC *taskService) UploadTask(data entity.UserTaskUploadCore) error {
 		return errors.New("task not found")
 	}
 
+	if data.Image == "" || data.Description == "" {
+		return errors.New("image and description can't empty")
+	}
+
 	err := taskUC.TaskRepo.UploadTask(data)
 	if err != nil {
 		return errors.New("failed upload task")
@@ -207,4 +210,32 @@ func (taskUC *taskService) FindUserTaskById(id string) (entity.UserTaskUploadCor
 	}
 
 	return task, nil
+}
+
+// UploadTaskRequest implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) UploadTaskRequest(input entity.UserTaskSubmissionCore) error {
+	if input.Image == "" || input.Description == "" || input.Title == "" {
+		return errors.New("image, description and title can't empty")
+	}
+
+	if input.Point <= 0 {
+		return errors.New("point can't less then 0")
+	}
+
+	err := taskUC.TaskRepo.UploadTaskRequest(input)
+	if err != nil {
+		return errors.New("failed upload request task")
+	}
+
+	return nil
+}
+
+// FindAllRequestTask implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllRequestTask() ([]entity.UserTaskSubmissionCore, error) {
+	userTask, err := taskUC.TaskRepo.FindAllRequestTask()
+	if err != nil {
+		return nil, errors.New("error get user request task")
+	}
+
+	return userTask, nil
 }

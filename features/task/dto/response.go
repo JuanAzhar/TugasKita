@@ -28,3 +28,12 @@ type UserTaskUploadResponse struct {
 	Description string
 	Status      string
 }
+
+type UserReqTaksResponse struct {
+	Id          string
+	Title       string
+	UserId      string
+	Image       string
+	Description string
+	Point       int
+}

@@ -18,3 +18,10 @@ type UserTaskUploadRequest struct {
 	Description string `json:"description"`
 	Status      string `json:"status"`
 }
+
+type UserReqTaskRequest struct {
+	Title       string `json:"title"`
+	Image       string `json:"image"`
+	Description string `json:"description"`
+	Point       int    `json:"point"`
+}

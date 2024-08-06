@@ -29,3 +29,13 @@ type UserTaskUploadCore struct {
 	Description string
 	Status      string
 }
+
+type UserTaskSubmissionCore struct {
+	Id          uuid.UUID
+	Title       string
+	UserId      string
+	Image       string
+	Description string
+	Point       int
+	Status      string
+}

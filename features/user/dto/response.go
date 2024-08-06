@@ -7,3 +7,8 @@ type UserResponse struct {
 	Point      string `json:"point"`
 	TotalPoint string `json:"total_point"`
 }
+
+type UserRankResponse struct {
+	Name  string `json:"name"`
+	Point string `json:"point"`
+}

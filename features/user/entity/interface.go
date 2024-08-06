@@ -8,6 +8,8 @@ type UserDataInterface interface{
 	ReadSpecificUser(id string) (user UserCore, err error)
 	DeleteUser(id string) (err error)
 	UpdatePoint(id string, data UserCore) error
+
+	GetRankUser()([]UserCore, error)
 }
 
 type UserUseCaseInterface interface{
@@ -16,4 +18,6 @@ type UserUseCaseInterface interface{
 	ReadAllUser()([]UserCore, error)
 	ReadSpecificUser(id string) (user UserCore, err error)
 	DeleteUser(id string) (err error)
+
+	GetRankUser()([]UserCore, error)
 }

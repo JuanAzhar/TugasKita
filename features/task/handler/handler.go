@@ -60,7 +60,7 @@ func (handler *TaskController) AddTask(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"message": "succes create user",
+		"message": "succes create task",
 	})
 }
 
@@ -335,8 +335,6 @@ func (handler *TaskController) UploadTaskUser(e echo.Context) error {
 		})
 	}
 
-	println("ini id task", input.TaskId)
-
 	dataInput := entity.UserTaskUploadCore{
 		TaskId:      input.TaskId,
 		Image:       input.Image,
@@ -417,7 +415,7 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 	data, err := handler.taskUsecase.FindUserTaskById(idParams)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": "error get specific user",
+			"message": "error get specific task",
 		})
 	}
 
@@ -431,8 +429,93 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"message": "get user",
+		"message": "get task",
 		"data":    response,
 	})
+}
 
+func (handler *TaskController) UploadRequestTaskUser(e echo.Context) error {
+	input := new(dto.UserReqTaskRequest)
+	errBind := e.Bind(&input)
+	if errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error bind data",
+		})
+	}
+
+	userId, _, errRole := middleware.ExtractTokenUserId(e)
+	if errRole != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": errRole.Error(),
+		})
+	}
+
+	dataInput := entity.UserTaskSubmissionCore{
+		Title:       input.Title,
+		Point:       input.Point,
+		Image:       input.Image,
+		Description: input.Description,
+	}
+	dataInput.UserId = userId
+
+	err := handler.taskUsecase.UploadTaskRequest(dataInput)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error upload request task",
+			"error":   err.Error(),
+		})
+	}
+
+	dataRespon := dto.UserReqTaksResponse{
+		Title:       input.Title,
+		Image:       input.Image,
+		Description: input.Description,
+		Point:       input.Point,
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "succes upload request task",
+		"data":    dataRespon,
+	})
+}
+
+func (handler *TaskController) FindAllUserRequestTask(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	data, err := handler.taskUsecase.FindAllRequestTask()
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get all user request task",
+		})
+	}
+
+	dataList := []entity.UserTaskSubmissionCore{}
+	for _, v := range data {
+		result := entity.UserTaskSubmissionCore{
+			Id:          v.Id,
+			Title:       v.Title,
+			Point:       v.Point,
+			UserId:      v.UserId,
+			Image:       v.Image,
+			Description: v.Description,
+			Status:      v.Status,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all user task",
+		"data":    dataList,
+	})
 }

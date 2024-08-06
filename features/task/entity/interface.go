@@ -12,6 +12,8 @@ type TaskDataInterface interface {
 	FindAllUserTask()([]UserTaskUploadCore, error)
 
 	UploadTask(input UserTaskUploadCore) error
+	UploadTaskRequest(input UserTaskSubmissionCore) error
+	FindAllRequestTask()([]UserTaskSubmissionCore, error)
 	FindAllClaimedTask(userId string) ([]UserTaskUploadCore, error)
 	FindTasksNotClaimedByUser(userId string) ([]TaskCore, error)
 }
@@ -28,6 +30,8 @@ type TaskUseCaseInterface interface {
 	FindAllUserTask()([]UserTaskUploadCore, error)
 
 	UploadTask(input UserTaskUploadCore) error
+	UploadTaskRequest(input UserTaskSubmissionCore) error
+	FindAllRequestTask()([]UserTaskSubmissionCore, error)
 	FindAllClaimedTask(userId string) ([]UserTaskUploadCore, error)
 	FindTasksNotClaimedByUser(userId string) ([]TaskCore, error)
 }

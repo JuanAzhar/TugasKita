@@ -21,4 +21,5 @@ func UserRouter(db *gorm.DB, e *echo.Group) {
 	e.GET("/profile", userController.ReadProfileUser, m.JWTMiddleware())
 	e.GET("/:id", userController.ReadSpecificUser, m.JWTMiddleware())
 	e.DELETE("/:id", userController.DeleteUser, m.JWTMiddleware())
+	e.GET("/rank", userController.GetRankUser, m.JWTMiddleware())
 }

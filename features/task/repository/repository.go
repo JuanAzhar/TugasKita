@@ -107,7 +107,6 @@ func (taskRepo *TaskRepository) UpdateTaskStatus(taskId string, data entity.User
 	var userData userModel.Users
 	taskData := entity.TaskUserCoreToTaskUserModel(data)
 
-	
 	// get task data
 	errData := taskRepo.db.Where("id=?", data.TaskId).First(&pointTask).Error
 	if errData != nil {
@@ -231,5 +230,53 @@ func (taskRepo *TaskRepository) FindUserTaskById(id string) (entity.UserTaskUplo
 	}
 
 	return userCore, nil
+}
 
+// UploadTaskRequest implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) UploadTaskRequest(input entity.UserTaskSubmissionCore) error {
+	newUUID, UUIDerr := uuid.NewRandom()
+	if UUIDerr != nil {
+		return UUIDerr
+	}
+
+	var inputData = model.UserTaskSubmission{
+		Id:          newUUID,
+		UserId:      input.UserId,
+		Title:       input.Title,
+		Point:       input.Point,
+		Image:       input.Image,
+		Description: input.Description,
+		Status:      input.Status,
+	}
+
+	errUpload := taskRepo.db.Save(&inputData)
+	if errUpload != nil {
+		return errUpload.Error
+	}
+
+	return nil
+}
+
+// FindAllRequestTask implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindAllRequestTask() ([]entity.UserTaskSubmissionCore, error) {
+	var userTask []model.UserTaskSubmission
+
+	errData := taskRepo.db.Find(&userTask).Error
+	if errData != nil {
+		return nil, errData
+	}
+
+	mapData := make([]entity.UserTaskSubmissionCore, len(userTask))
+	for i, v := range userTask {
+		mapData[i] = entity.UserTaskSubmissionCore{
+			Id:          v.Id,
+			UserId:      v.UserId,
+			Title:       v.Title,
+			Image:       v.Image,
+			Description: v.Description,
+			Point:       v.Point,
+			Status:      v.Status,
+		}
+	}
+	return mapData, nil
 }

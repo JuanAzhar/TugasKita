@@ -22,6 +22,7 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	user.GET("/:id", taskController.ReadSpecificTask, m.JWTMiddleware())
 	user.GET("", taskController.ReadAllTask, m.JWTMiddleware())
 	user.POST("", taskController.UploadTaskUser, m.JWTMiddleware())
+	user.POST("/request", taskController.UploadRequestTaskUser, m.JWTMiddleware())
 	user.GET("/riwayat", taskController.ReadHistoryTaskUser, m.JWTMiddleware())
 
 	admin := e.Group("/admin-task")
@@ -32,6 +33,7 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	admin.DELETE("/:taskId", taskController.DeleteTask, m.JWTMiddleware())
 
 	admin.GET("/user", taskController.FindAllUserTask, m.JWTMiddleware())
+	admin.GET("/user/request", taskController.FindAllUserRequestTask, m.JWTMiddleware())
 	admin.PUT("/user/:id", taskController.UpdateTaskStatus, m.JWTMiddleware())
 	admin.GET("/user/:id", taskController.FindUserTaskById, m.JWTMiddleware())
 }

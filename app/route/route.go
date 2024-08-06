@@ -5,10 +5,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func New(e *echo.Echo, db *gorm.DB){
+func New(e *echo.Echo, db *gorm.DB) {
 	user := e.Group("user")
 	base := e.Group("")
 
 	UserRouter(db, user)
 	TaskRouter(db, base)
+	RewardRouter(db, base)
 }
