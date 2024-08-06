@@ -26,6 +26,7 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	user.POST("", taskController.UploadTaskUser, m.JWTMiddleware())
 	user.POST("/request", taskController.UploadRequestTaskUser, m.JWTMiddleware())
 	user.GET("/riwayat", taskController.ReadHistoryTaskUser, m.JWTMiddleware())
+	user.GET("/req-riwayat", taskController.FindAllRequestTaskHistory, m.JWTMiddleware())
 
 	admin := e.Group("/admin-task")
 	admin.GET("/:id", taskController.ReadSpecificTask, m.JWTMiddleware())

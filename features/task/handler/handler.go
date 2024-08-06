@@ -524,7 +524,43 @@ func (handler *TaskController) FindAllUserRequestTask(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"message": "get all user task",
+		"message": "get all user task request",
 		"data":    dataList,
 	})
+}
+
+func (handler *TaskController) FindAllRequestTaskHistory(e echo.Context) error {
+	userId, _, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	data, err := handler.taskUsecase.FindAllRequestTaskHistory(userId)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get all user request task history",
+		})
+	}
+
+	dataList := []entity.UserTaskSubmissionCore{}
+	for _, v := range data {
+		result := entity.UserTaskSubmissionCore{
+			Id:          v.Id,
+			Title:       v.Title,
+			Point:       v.Point,
+			UserId:      v.UserId,
+			Image:       v.Image,
+			Description: v.Description,
+			Status:      v.Status,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all user task request history",
+		"data":    dataList,
+	})
+
 }

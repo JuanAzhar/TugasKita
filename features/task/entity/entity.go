@@ -36,6 +36,7 @@ type UserTaskSubmissionCore struct {
 	Id          uuid.UUID
 	Title       string
 	UserId      string
+	UserName    string
 	Image       string
 	Description string
 	Point       int

@@ -81,3 +81,36 @@ func ListTaskUserModelToTaskUserCore(data []model.UserTaskUpload) []UserTaskUplo
 	}
 	return dataTask
 }
+
+func TaskUserReqModelToTaskUserReqCore(data model.UserTaskSubmission) UserTaskSubmissionCore {
+	return UserTaskSubmissionCore{
+		Id:          data.Id,
+		Title:       data.Title,
+		Point:       data.Point,
+		UserId:      data.UserId,
+		Image:       data.Image,
+		Description: data.Description,
+		Status:      data.Status,
+	}
+}
+
+func TaskUserReqCoreToTaskUserReqModel(data UserTaskSubmissionCore) model.UserTaskSubmission{
+	return model.UserTaskSubmission{
+		Id:          data.Id,
+		Title:       data.Title,
+		Point:       data.Point,
+		UserId:      data.UserId,
+		Image:       data.Image,
+		Description: data.Description,
+		Status:      data.Status,
+	}
+}
+
+func ListTaskUserReqModelToTaskUserReqCore(data []model.UserTaskSubmission) []UserTaskSubmissionCore {
+	dataTask := []UserTaskSubmissionCore{}
+	for _, v := range data {
+		result := TaskUserReqModelToTaskUserReqCore(v)
+		dataTask = append(dataTask, result)
+	}
+	return dataTask
+}

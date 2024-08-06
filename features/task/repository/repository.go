@@ -151,6 +151,15 @@ func (taskRepo *TaskRepository) FindAllClaimedTask(userId string) ([]entity.User
 	return dataTask, nil
 }
 
+// FindAllRequestTaskHistory implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindAllRequestTaskHistory(userId string) ([]entity.UserTaskSubmissionCore, error) {
+	var task []model.UserTaskSubmission
+	taskRepo.db.Where("user_id=?", userId).Find(&task)
+
+	dataTask := entity.ListTaskUserReqModelToTaskUserReqCore(task)
+	return dataTask, nil
+}
+
 // FindAllTaskNotClaimed implements entity.TaskDataInterface.
 func (taskRepo *TaskRepository) FindTasksNotClaimedByUser(userId string) ([]entity.TaskCore, error) {
 	var tasks []model.Task

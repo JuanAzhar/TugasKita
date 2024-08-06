@@ -163,6 +163,16 @@ func (taskUC *taskService) FindAllClaimedTask(userId string) ([]entity.UserTaskU
 	return data, nil
 }
 
+// FindAllRequestTaskHistory implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllRequestTaskHistory(userId string) ([]entity.UserTaskSubmissionCore, error) {
+	data, err := taskUC.TaskRepo.FindAllRequestTaskHistory(userId)
+	if err != nil {
+		return nil, err
+	}
+	
+	return data, nil
+}
+
 // FindTasksNotClaimedByUser implements entity.TaskUseCaseInterface.
 func (taskUC *taskService) FindTasksNotClaimedByUser(userId string) ([]entity.TaskCore, error) {
 	data, err := taskUC.TaskRepo.FindTasksNotClaimedByUser(userId)
