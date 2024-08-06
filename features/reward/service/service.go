@@ -120,7 +120,6 @@ func (rewardUC *RewardService) FindAllUploadReward() ([]entity.UserRewardRequest
 
 // UploadRewardRequest implements entity.RewardUseCaseInterface.
 func (rewardUC *RewardService) UploadRewardRequest(input entity.UserRewardRequestCore) error {
-	//tambahin pengecekan point disini nanti
 	userData, errUser := rewardUC.UserRepo.ReadSpecificUser(input.UserId)
 	if errUser != nil {
 		return errors.New("failed get user")
@@ -161,6 +160,50 @@ func (rewardUC *RewardService) FindUserRewardById(id string) (entity.UserRewardR
 
 // UpdateReqRewardStatus implements entity.RewardUseCaseInterface.
 func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entity.UserRewardRequestCore) error {
+	// user data
+	userData, errUser := rewardUC.UserRepo.ReadSpecificUser(data.UserId)
+	if errUser != nil {
+		return errors.New("failed get user")
+	}
+
+	//reward data
+	rewardData, errReward := rewardUC.RewardRepo.FindById(data.RewardId)
+	if errReward != nil {
+		return errors.New("failed get reward")
+	}
+
+	//reward request
+	rewardReqData, errRewardReq := rewardUC.RewardRepo.FindUserRewardById(rewardId)
+	if errRewardReq != nil {
+		return errors.New("failed get user reward request")
+	}
+
+	if rewardReqData.Status == "Done" {
+		return errors.New("you already accept this request")
+	}
+
+	if rewardData.Stock < 1 {
+		return errors.New("not enough stock")
+	}
+
+	if data.Status == "Done" {
+		userPoint,_ := strconv.Atoi(userData.Point)
+		count := userPoint - rewardData.Price
+
+		if count < 0 {
+			return errors.New("not enough point")
+		}
+
+		userData.Point = strconv.Itoa(count)
+	}
+
+	//update user
+	errUserUpdate := rewardUC.UserRepo.UpdatePoint(data.UserId, userData)
+	if errUserUpdate != nil {
+		return errors.New("failed update user point")
+	}
+
+	//update status
 	err := rewardUC.RewardRepo.UpdateReqRewardStatus(rewardId, data)
 	if err != nil{
 		return err
