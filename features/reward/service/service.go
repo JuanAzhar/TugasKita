@@ -135,3 +135,13 @@ func (rewardUC *RewardService) FindUserRewardById(id string) (entity.UserRewardR
 
 	return reward, nil
 }
+
+// UpdateReqRewardStatus implements entity.RewardUseCaseInterface.
+func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entity.UserRewardRequestCore) error {
+	err := rewardUC.RewardRepo.UpdateReqRewardStatus(rewardId, data)
+	if err != nil{
+		return err
+	}
+
+	return nil
+}

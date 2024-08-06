@@ -20,5 +20,5 @@ type UserRewardRequest struct {
 	Id       uuid.UUID
 	RewardId string 
 	UserId   string
-	Status   string `gorm:"type:varchar(20);default:'review'" json:"status"`
+	Status   string `gorm:"type:varchar(20);default:'Review'" json:"status"`
 }

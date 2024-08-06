@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"tugaskita/features/reward/dto"
 	"tugaskita/features/reward/entity"
+	user "tugaskita/features/user/entity"
 	middleware "tugaskita/utils/jwt"
 
 	"github.com/google/uuid"
@@ -12,11 +13,13 @@ import (
 
 type RewardController struct {
 	rewardUsecase entity.RewardUseCaseInterface
+	userUsecase   user.UserUseCaseInterface
 }
 
-func New(rewardUC entity.RewardUseCaseInterface) *RewardController {
+func New(rewardUC entity.RewardUseCaseInterface, userUC user.UserUseCaseInterface) *RewardController {
 	return &RewardController{
 		rewardUsecase: rewardUC,
+		userUsecase:   userUC,
 	}
 }
 
@@ -245,11 +248,17 @@ func (handler *RewardController) FindAllUploadReward(e echo.Context) error {
 
 	dataList := []entity.UserRewardRequestCore{}
 	for _, v := range data {
+
+		userData, _ := handler.userUsecase.ReadSpecificUser(v.UserId)
+		rewardData, _ := handler.rewardUsecase.FindById(v.RewardId)
+
 		result := entity.UserRewardRequestCore{
-			Id:       v.Id,
-			RewardId: v.RewardId,
-			UserId:   v.UserId,
-			Status:   v.Status,
+			Id:         v.Id,
+			RewardId:   v.RewardId,
+			RewardName: rewardData.Name,
+			UserId:     v.UserId,
+			UserName:   userData.Name,
+			Status:     v.Status,
 		}
 		dataList = append(dataList, result)
 	}
@@ -333,5 +342,50 @@ func (handler *RewardController) FindUserRewardById(e echo.Context) error {
 	return e.JSON(http.StatusOK, map[string]any{
 		"message": "get reward",
 		"data":    response,
+	})
+}
+
+func (handler *RewardController) UpdateReqRewardStatus(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	idParams := e.Param("id")
+
+	data := dto.RewardReqUpdateRequest{}
+	if errBind := e.Bind(&data); errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error binding data",
+		})
+	}
+
+	//get userId & rewardId
+	rewardData, _ := handler.rewardUsecase.FindUserRewardById(idParams)
+
+	status := entity.UserRewardRequestCore{
+		RewardId:   rewardData.RewardId,
+		UserId:     rewardData.UserId,
+		Status:     data.Status,
+	}
+
+	errUpdate := handler.rewardUsecase.UpdateReqRewardStatus(idParams, status)
+	if errUpdate != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error updating reward status",
+			"error":   errUpdate.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "reward updated successfully",
 	})
 }

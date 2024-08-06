@@ -11,6 +11,8 @@ type RewardDataInterface interface {
 	FindAllUploadReward()([]UserRewardRequestCore, error)
 	FindUserRewardById(id string)(UserRewardRequestCore, error)
 	FindAllRewardHistory(userId string)([]UserRewardRequestCore, error)
+
+	UpdateReqRewardStatus(rewardId string, data UserRewardRequestCore) error
 }
 
 type RewardUseCaseInterface interface {
@@ -24,4 +26,6 @@ type RewardUseCaseInterface interface {
 	FindAllUploadReward()([]UserRewardRequestCore, error)
 	FindUserRewardById(id string)(UserRewardRequestCore, error)
 	FindAllRewardHistory(userId string)([]UserRewardRequestCore, error)
+
+	UpdateReqRewardStatus(rewardId string, data UserRewardRequestCore) error
 }

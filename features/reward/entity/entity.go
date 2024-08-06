@@ -17,8 +17,10 @@ type RewardCore struct {
 }
 
 type UserRewardRequestCore struct {
-	Id       uuid.UUID
-	RewardId string
-	UserId   string
-	Status   string
+	Id         uuid.UUID
+	RewardId   string
+	RewardName string
+	UserId     string
+	UserName   string
+	Status     string
 }

@@ -10,3 +10,9 @@ type RewardRequest struct {
 type RewardReqRequest struct {
 	RewardId string `json:"reward_id"`
 }
+
+type RewardReqUpdateRequest struct {
+	RewardId string `json:"reward_id"`
+	UserId   string `json:"user_id"`
+	Status   string `json:"status"`
+}

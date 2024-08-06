@@ -4,6 +4,9 @@ import (
 	"tugaskita/features/reward/handler"
 	"tugaskita/features/reward/repository"
 	"tugaskita/features/reward/service"
+
+	userR "tugaskita/features/user/repository"
+	userS "tugaskita/features/user/service"
 	m "tugaskita/utils/jwt"
 
 	"github.com/labstack/echo/v4"
@@ -11,19 +14,27 @@ import (
 )
 
 func RewardRouter(db *gorm.DB, e *echo.Group) {
-	rewardRepository := repository.NewRewardRepository(db)
-	rewardUseCase := service.NewRewardService(rewardRepository)
-	rewardController := handler.New(rewardUseCase)
+	userRepository := userR.New(db)
+	userUseCase := userS.New(userRepository)
 
-	reward := e.Group("/reward")
-	reward.GET("", rewardController.ReadAllReward, m.JWTMiddleware())
-	reward.GET("/:id", rewardController.ReadSpecificReward, m.JWTMiddleware())
-	reward.POST("", rewardController.AddReward, m.JWTMiddleware())
-	reward.PUT("/:id", rewardController.UpdateReward, m.JWTMiddleware())
-	reward.DELETE("/:id", rewardController.DeleteReward, m.JWTMiddleware())
-	
-	reward.GET("/history", rewardController.FindAllRewardHistory,m.JWTMiddleware())
-	reward.GET("/user/:id", rewardController.FindUserRewardById, m.JWTMiddleware())
-	reward.GET("/user", rewardController.FindAllUploadReward, m.JWTMiddleware())
-	reward.POST("/exchange", rewardController.UploadRewardRequest, m.JWTMiddleware())
+	rewardRepository := repository.NewRewardRepository(db, userRepository)
+	rewardUseCase := service.NewRewardService(rewardRepository)
+	rewardController := handler.New(rewardUseCase, userUseCase)
+
+	user := e.Group("/user-reward")
+	user.GET("", rewardController.ReadAllReward, m.JWTMiddleware())
+	user.GET("/:id", rewardController.ReadSpecificReward, m.JWTMiddleware())
+	user.GET("/history", rewardController.FindAllRewardHistory, m.JWTMiddleware())
+	user.POST("/exchange", rewardController.UploadRewardRequest, m.JWTMiddleware())
+
+	admin := e.Group("/admin-reward")
+	admin.GET("", rewardController.ReadAllReward, m.JWTMiddleware())
+	admin.POST("", rewardController.AddReward, m.JWTMiddleware())
+	admin.GET("/:id", rewardController.ReadSpecificReward, m.JWTMiddleware())
+	admin.PUT("/:id", rewardController.UpdateReward, m.JWTMiddleware())
+	admin.DELETE("/:id", rewardController.DeleteReward, m.JWTMiddleware())
+	admin.GET("/user", rewardController.FindAllUploadReward, m.JWTMiddleware())
+	admin.GET("/user/:id", rewardController.FindUserRewardById, m.JWTMiddleware())
+	admin.PUT("/user/:id", rewardController.UpdateReqRewardStatus, m.JWTMiddleware())
+
 }

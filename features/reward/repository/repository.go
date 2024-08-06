@@ -2,8 +2,11 @@ package repository
 
 import (
 	"errors"
+	"strconv"
 	"tugaskita/features/reward/entity"
 	"tugaskita/features/reward/model"
+	user "tugaskita/features/user/entity"
+	userModel "tugaskita/features/user/model"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -11,11 +14,13 @@ import (
 
 type RewardRepository struct {
 	db *gorm.DB
+	userRepository user.UserDataInterface
 }
 
-func NewRewardRepository(db *gorm.DB) entity.RewardDataInterface {
+func NewRewardRepository(db *gorm.DB, userRepository user.UserDataInterface) entity.RewardDataInterface {
 	return &RewardRepository{
 		db: db,
+		userRepository: userRepository,
 	}
 }
 
@@ -165,4 +170,50 @@ func (rewardRepo *RewardRepository) FindUserRewardById(id string) (entity.UserRe
 	}
 
 	return userCore, nil
+}
+
+// UpdateReqRewardStatus implements entity.RewardDataInterface.
+func (rewardRepo *RewardRepository) UpdateReqRewardStatus(rewardId string, data entity.UserRewardRequestCore) error {
+	var pointReward model.Reward
+	var userData userModel.Users
+	rewardData := entity.RewardUserCoreToRewardUserModel(data)
+
+	//get reward data
+	errData := rewardRepo.db.Where("id=?", data.RewardId).First(&pointReward).Error
+	if errData != nil {
+		return errData
+	}
+
+	// get user
+	errUser := rewardRepo.db.Where("id=?", data.UserId).First(&userData).Error
+	if errUser != nil {
+		return errUser
+	}
+
+	//update status
+	tx := rewardRepo.db.Where("id=?", rewardId).Updates(rewardData)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	if rewardData.Status == "Done"{
+		userPoint, _ := strconv.Atoi(userData.Point)
+		count := userPoint - pointReward.Price
+
+		if count < 0 {
+			rewardData.Status = "Review"
+			rewardRepo.db.Where("id=?", rewardId).Updates(rewardData)
+			return errors.New("not enough point")
+		}
+
+		userData.Point = strconv.Itoa(count)
+
+		saveUser := user.UserModelToUserCore(userData)
+
+		updateUser := rewardRepo.userRepository.UpdatePoint(data.UserId, saveUser)
+		if updateUser != nil {
+			return updateUser
+		}
+	}
+	return nil
 }
