@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"mime/multipart"
 	"time"
 	"tugaskita/features/task/entity"
 )
@@ -169,7 +170,7 @@ func (taskUC *taskService) FindAllRequestTaskHistory(userId string) ([]entity.Us
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return data, nil
 }
 
@@ -184,17 +185,21 @@ func (taskUC *taskService) FindTasksNotClaimedByUser(userId string) ([]entity.Ta
 }
 
 // UploadTask implements entity.TaskUseCaseInterface.
-func (taskUC *taskService) UploadTask(data entity.UserTaskUploadCore) error {
+func (taskUC *taskService) UploadTask(data entity.UserTaskUploadCore, image *multipart.FileHeader) error {
 	_, errTask := taskUC.TaskRepo.FindById(data.TaskId)
 	if errTask != nil {
 		return errors.New("task not found")
 	}
 
-	if data.Image == "" || data.Description == "" {
-		return errors.New("image and description can't empty")
+	if data.Description == "" {
+		return errors.New("description can't empty")
 	}
 
-	err := taskUC.TaskRepo.UploadTask(data)
+	if image != nil && image.Size > 10*1024*1024 {
+		return errors.New("image file size should be less than 10 MB")
+	}
+
+	err := taskUC.TaskRepo.UploadTask(data, image)
 	if err != nil {
 		return errors.New("failed upload task")
 	}
@@ -223,16 +228,20 @@ func (taskUC *taskService) FindUserTaskById(id string) (entity.UserTaskUploadCor
 }
 
 // UploadTaskRequest implements entity.TaskUseCaseInterface.
-func (taskUC *taskService) UploadTaskRequest(input entity.UserTaskSubmissionCore) error {
-	if input.Image == "" || input.Description == "" || input.Title == "" {
-		return errors.New("image, description and title can't empty")
+func (taskUC *taskService) UploadTaskRequest(input entity.UserTaskSubmissionCore, image *multipart.FileHeader) error {
+	if input.Description == "" || input.Title == "" {
+		return errors.New("description and title can't empty")
 	}
 
 	if input.Point <= 0 {
 		return errors.New("point can't less then 0")
 	}
 
-	err := taskUC.TaskRepo.UploadTaskRequest(input)
+	if image != nil && image.Size > 10*1024*1024 {
+		return errors.New("image file size should be less than 10 MB")
+	}
+
+	err := taskUC.TaskRepo.UploadTaskRequest(input, image)
 	if err != nil {
 		return errors.New("failed upload request task")
 	}

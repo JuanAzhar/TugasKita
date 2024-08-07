@@ -2,9 +2,11 @@ package repository
 
 import (
 	"errors"
+	"mime/multipart"
 	"tugaskita/features/reward/entity"
 	"tugaskita/features/reward/model"
 	user "tugaskita/features/user/entity"
+	"tugaskita/utils/cloudinary"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -23,11 +25,24 @@ func NewRewardRepository(db *gorm.DB, userRepository user.UserDataInterface) ent
 }
 
 // CreateReward implements entity.RewardDataInterface.
-func (rewardRepo *RewardRepository) CreateReward(input entity.RewardCore) error {
+func (rewardRepo *RewardRepository) CreateReward(input entity.RewardCore, image *multipart.FileHeader) error {
 	newUUID, UUIDerr := uuid.NewRandom()
 	if UUIDerr != nil {
 		return UUIDerr
 	}
+
+	file, err := image.Open()
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
+	if err != nil {
+		return err
+	}
+
+	input.Image = imageURL
 
 	data := entity.RewardCoreToRewardModel(input)
 	data.ID = newUUID

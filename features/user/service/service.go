@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"mime/multipart"
 	"regexp"
 	"tugaskita/features/user/entity"
 	crypt "tugaskita/utils/bcrypt"
@@ -70,7 +71,7 @@ func (userUC *userUseCase) ReadSpecificUser(id string) (user entity.UserCore, er
 }
 
 // Register implements entity.UserUseCaseInterface.
-func (userUC *userUseCase) Register(data entity.UserCore) (row int, err error) {
+func (userUC *userUseCase) Register(data entity.UserCore, image *multipart.FileHeader) (row int, err error) {
 	if data.Email == "" || data.Password == "" {
 		return 0, errors.New("error, email or password can't be empty")
 	}
@@ -80,7 +81,11 @@ func (userUC *userUseCase) Register(data entity.UserCore) (row int, err error) {
 		return 0, errors.New("error. email format not valid")
 	}
 
-	errRegister, err := userUC.userRepository.Register(data)
+	if image != nil && image.Size > 10*1024*1024 {
+		return 0, errors.New("image file size should be less than 10 MB")
+	}
+
+	errRegister, err := userUC.userRepository.Register(data, image)
 	if err != nil {
 		return 0, err
 	}
@@ -106,4 +111,18 @@ func (userUC *userUseCase) GetRankUser() ([]entity.UserCore, error) {
 	}
 
 	return users, nil
+}
+
+// ChangePassword implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) ChangePassword(id string, data entity.UserCore) error {
+	if data.Password == "" {
+		return errors.New("password can't be empty")
+	}
+
+	err := userUC.userRepository.ChangePassword(id, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

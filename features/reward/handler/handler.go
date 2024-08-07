@@ -37,11 +37,23 @@ func (handler *RewardController) AddReward(e echo.Context) error {
 		})
 	}
 
-	input := new(dto.RewardRequest)
+	input := dto.RewardRequest{}
 	errBind := e.Bind(&input)
 	if errBind != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error bind data",
+		})
+	}
+
+	image, err := e.FormFile("image")
+	if err != nil {
+		if err == http.ErrMissingFile {
+			return e.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "No file uploaded",
+			})
+		}
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error uploading file",
 		})
 	}
 
@@ -52,7 +64,7 @@ func (handler *RewardController) AddReward(e echo.Context) error {
 		Image: input.Image,
 	}
 
-	errTask := handler.rewardUsecase.CreateReward(data)
+	errTask := handler.rewardUsecase.CreateReward(data, image)
 	if errTask != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error create reward",

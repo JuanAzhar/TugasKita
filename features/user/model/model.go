@@ -7,6 +7,7 @@ import (
 type Users struct {
 	ID         string    `gorm:"type:varchar(50);primaryKey;not null" json:"id"`
 	Name       string    `gorm:"varchar(50);not null" json:"username"`
+	Image      string    `json:"image"`
 	Email      string    `gorm:"varchar(50);not null" json:"email"`
 	Password   string    `gorm:"varchar(50);not null" json:"password"`
 	Role       string    `gorm:"Varchar(25);not null" json:"role"`

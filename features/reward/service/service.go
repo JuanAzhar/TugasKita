@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"mime/multipart"
 	"strconv"
 	"tugaskita/features/reward/entity"
 	user "tugaskita/features/user/entity"
@@ -9,20 +10,20 @@ import (
 
 type RewardService struct {
 	RewardRepo entity.RewardDataInterface
-	UserRepo user.UserDataInterface
+	UserRepo   user.UserDataInterface
 }
 
 func NewRewardService(rewardRepo entity.RewardDataInterface, userRepo user.UserDataInterface) entity.RewardUseCaseInterface {
 	return &RewardService{
 		RewardRepo: rewardRepo,
-		UserRepo: userRepo,
+		UserRepo:   userRepo,
 	}
 }
 
 // CreateReward implements entity.RewardUseCaseInterface.
-func (rewardUC *RewardService) CreateReward(input entity.RewardCore) error {
+func (rewardUC *RewardService) CreateReward(input entity.RewardCore, image *multipart.FileHeader) error {
 
-	if input.Name == "" || input.Image == "" {
+	if input.Name == "" {
 		return errors.New("name and image can't be empty")
 	}
 
@@ -30,7 +31,11 @@ func (rewardUC *RewardService) CreateReward(input entity.RewardCore) error {
 		return errors.New("price and stock can't less then 0")
 	}
 
-	err := rewardUC.RewardRepo.CreateReward(input)
+	if image != nil && image.Size > 10*1024*1024 {
+		return errors.New("image file size should be less than 10 MB")
+	}
+
+	err := rewardUC.RewardRepo.CreateReward(input, image)
 	if err != nil {
 		return err
 	}
@@ -132,11 +137,11 @@ func (rewardUC *RewardService) UploadRewardRequest(input entity.UserRewardReques
 		return errors.New("failed get reward")
 	}
 
-	if userPoint < rewardData.Price{
+	if userPoint < rewardData.Price {
 		return errors.New("not enough point")
 	}
 
-	if rewardData.Stock < 1{
+	if rewardData.Stock < 1 {
 		return errors.New("not enough stock")
 	}
 
@@ -187,7 +192,7 @@ func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entit
 	}
 
 	if data.Status == "Done" {
-		userPoint,_ := strconv.Atoi(userData.Point)
+		userPoint, _ := strconv.Atoi(userData.Point)
 		count := userPoint - rewardData.Price
 
 		if count < 0 {
@@ -205,7 +210,7 @@ func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entit
 
 	//update status
 	err := rewardUC.RewardRepo.UpdateReqRewardStatus(rewardId, data)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 

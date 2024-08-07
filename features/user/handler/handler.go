@@ -21,21 +21,33 @@ func New(userUC entity.UserUseCaseInterface) *UserController {
 }
 
 func (handler *UserController) Register(e echo.Context) error {
-	input := new(dto.UserRequest)
+	input := dto.UserRequest{}
 	errBind := e.Bind(&input)
 	if errBind != nil {
-		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": "error bind data",
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "error bind data" + errBind.Error(),
+		})
+	}
+	image, err := e.FormFile("image")
+	if err != nil {
+		if err == http.ErrMissingFile {
+			return e.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "No file uploaded",
+			})
+		}
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error uploading file",
 		})
 	}
 
 	data := entity.UserCore{
 		Name:     input.Name,
+		Image:    input.Image,
 		Email:    input.Email,
 		Password: input.Password,
 	}
 
-	row, errUser := handler.userUsecase.Register(data)
+	row, errUser := handler.userUsecase.Register(data, image)
 	if errUser != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error create user",
@@ -132,7 +144,7 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 		})
 	}
 
-	println("user Id : " , userId)
+	println("user Id : ", userId)
 
 	idCheck, err := uuid.Parse(userId)
 	if err != nil {
@@ -201,7 +213,7 @@ func (handler *UserController) ReadAllUser(e echo.Context) error {
 	})
 }
 
-func (handler *UserController) GetRankUser(e echo.Context) error{
+func (handler *UserController) GetRankUser(e echo.Context) error {
 	data, err := handler.userUsecase.GetRankUser()
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
@@ -212,8 +224,8 @@ func (handler *UserController) GetRankUser(e echo.Context) error{
 	dataList := []dto.UserRankResponse{}
 	for _, v := range data {
 		result := dto.UserRankResponse{
-			Name:       v.Name,
-			Point:      v.Point,
+			Name:  v.Name,
+			Point: v.Point,
 		}
 		dataList = append(dataList, result)
 	}
@@ -222,4 +234,37 @@ func (handler *UserController) GetRankUser(e echo.Context) error{
 		"message": "get all user rank",
 		"data":    dataList,
 	})
+}
+
+func (handler *UserController) ChangePassword(e echo.Context) error {
+	userId, _, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	data := new(dto.UserRequest)
+	if errBind := e.Bind(data); errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error binding data",
+		})
+	}
+
+	userData := entity.UserCore{
+		Password: data.Password,
+	}
+
+	errUpdate := handler.userUsecase.ChangePassword(userId, userData)
+	if errUpdate != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error updating password",
+			"error":   errUpdate.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "password updated",
+	})
+
 }

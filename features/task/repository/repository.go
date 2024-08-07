@@ -2,11 +2,13 @@ package repository
 
 import (
 	"errors"
+	"mime/multipart"
 	"strconv"
 	"tugaskita/features/task/entity"
 	"tugaskita/features/task/model"
 	user "tugaskita/features/user/entity"
 	userModel "tugaskita/features/user/model"
+	"tugaskita/utils/cloudinary"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -174,11 +176,24 @@ func (taskRepo *TaskRepository) FindTasksNotClaimedByUser(userId string) ([]enti
 }
 
 // UploadTask implements entity.TaskDataInterface.
-func (taskRepo *TaskRepository) UploadTask(input entity.UserTaskUploadCore) error {
+func (taskRepo *TaskRepository) UploadTask(input entity.UserTaskUploadCore, image *multipart.FileHeader) error {
 	newUUID, UUIDerr := uuid.NewRandom()
 	if UUIDerr != nil {
 		return UUIDerr
 	}
+
+	file, err := image.Open()
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
+	if err != nil {
+		return err
+	}
+
+	input.Image = imageURL
 
 	var inputData = model.UserTaskUpload{
 		Id:          newUUID,
@@ -242,11 +257,24 @@ func (taskRepo *TaskRepository) FindUserTaskById(id string) (entity.UserTaskUplo
 }
 
 // UploadTaskRequest implements entity.TaskDataInterface.
-func (taskRepo *TaskRepository) UploadTaskRequest(input entity.UserTaskSubmissionCore) error {
+func (taskRepo *TaskRepository) UploadTaskRequest(input entity.UserTaskSubmissionCore, image *multipart.FileHeader) error {
 	newUUID, UUIDerr := uuid.NewRandom()
 	if UUIDerr != nil {
 		return UUIDerr
 	}
+
+	file, err := image.Open()
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
+	if err != nil {
+		return err
+	}
+
+	input.Image = imageURL
 
 	var inputData = model.UserTaskSubmission{
 		Id:          newUUID,

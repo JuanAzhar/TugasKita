@@ -323,11 +323,23 @@ func (handler *TaskController) ReadHistoryTaskUser(e echo.Context) error {
 }
 
 func (handler *TaskController) UploadTaskUser(e echo.Context) error {
-	input := new(dto.UserTaskUploadRequest)
+	input := dto.UserTaskUploadRequest{}
 	errBind := e.Bind(&input)
 	if errBind != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error bind data",
+		})
+	}
+
+	image, err := e.FormFile("image")
+	if err != nil {
+		if err == http.ErrMissingFile {
+			return e.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "No file uploaded",
+			})
+		}
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error uploading file",
 		})
 	}
 
@@ -345,11 +357,11 @@ func (handler *TaskController) UploadTaskUser(e echo.Context) error {
 	}
 	dataInput.UserId = userId
 
-	err := handler.taskUsecase.UploadTask(dataInput)
-	if err != nil {
+	errUpload := handler.taskUsecase.UploadTask(dataInput, image)
+	if errUpload != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error upload task",
-			"error":   err.Error(),
+			"error":   errUpload.Error(),
 		})
 	}
 
@@ -444,7 +456,7 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 }
 
 func (handler *TaskController) UploadRequestTaskUser(e echo.Context) error {
-	input := new(dto.UserReqTaskRequest)
+	input := dto.UserReqTaskRequest{}
 	errBind := e.Bind(&input)
 	if errBind != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
@@ -459,6 +471,18 @@ func (handler *TaskController) UploadRequestTaskUser(e echo.Context) error {
 		})
 	}
 
+	image, err := e.FormFile("image")
+	if err != nil {
+		if err == http.ErrMissingFile {
+			return e.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "No file uploaded",
+			})
+		}
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error uploading file",
+		})
+	}
+
 	dataInput := entity.UserTaskSubmissionCore{
 		Title:       input.Title,
 		Point:       input.Point,
@@ -467,11 +491,11 @@ func (handler *TaskController) UploadRequestTaskUser(e echo.Context) error {
 	}
 	dataInput.UserId = userId
 
-	err := handler.taskUsecase.UploadTaskRequest(dataInput)
-	if err != nil {
+	errUpload := handler.taskUsecase.UploadTaskRequest(dataInput, image)
+	if errUpload != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error upload request task",
-			"error":   err.Error(),
+			"error":   errUpload.Error(),
 		})
 	}
 

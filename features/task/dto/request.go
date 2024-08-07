@@ -12,16 +12,16 @@ type TaskRequest struct {
 }
 
 type UserTaskUploadRequest struct {
-	TaskId      string `json:"task_id"`
+	TaskId      string `json:"task_id" form:"task_id"`
 	UserId      string `json:"user_id"`
-	Image       string `json:"image"`
-	Description string `json:"description"`
+	Image       string `json:"image" form:"image"`
+	Description string `json:"description" form:"description"`
 	Status      string `json:"status"`
 }
 
 type UserReqTaskRequest struct {
-	Title       string `json:"title"`
-	Image       string `json:"image"`
-	Description string `json:"description"`
-	Point       int    `json:"point"`
+	Title       string `json:"title" form:"title"`
+	Image       string `json:"image" form:"image"`
+	Description string `json:"description" form:"description"`
+	Point       int    `json:"point" form:"point"`
 }

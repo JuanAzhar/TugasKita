@@ -1,10 +1,10 @@
 package dto
 
 type RewardRequest struct {
-	Name  string `json:"name"`
-	Stock int    `json:"stock"`
-	Price int    `json:"price"`
-	Image string `json:"image"`
+	Name  string `json:"name" form:"name"`
+	Stock int    `json:"stock" form:"stock"`
+	Price int    `json:"price" form:"price"`
+	Image string `json:"image" form:"image"`
 }
 
 type RewardReqRequest struct {
