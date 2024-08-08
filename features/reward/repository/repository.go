@@ -96,8 +96,21 @@ func (rewardRepo *RewardRepository) FindById(rewardId string) (entity.RewardCore
 }
 
 // UpdateReward implements entity.RewardDataInterface.
-func (rewardRepo *RewardRepository) UpdateReward(rewardId string, data entity.RewardCore) error {
+func (rewardRepo *RewardRepository) UpdateReward(rewardId string, data entity.RewardCore, image *multipart.FileHeader) error {
 	dataReward := entity.RewardCoreToRewardModel(data)
+
+	file, err := image.Open()
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
+	if err != nil {
+		return err
+	}
+
+	dataReward.Image = imageURL
 
 	tx := rewardRepo.db.Where("id = ?", rewardId).Updates(&dataReward)
 	if tx.Error != nil {

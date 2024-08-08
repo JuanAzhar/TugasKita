@@ -163,7 +163,7 @@ func (handler *TaskController) ReadSpecificTask(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"message": "get user",
+		"message": "get task",
 		"data":    response,
 	})
 }
@@ -187,6 +187,7 @@ func (handler *TaskController) DeleteTask(e echo.Context) error {
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Error deleting task",
+			"error":   err.Error(),
 		})
 	}
 
@@ -303,12 +304,18 @@ func (handler *TaskController) ReadHistoryTaskUser(e echo.Context) error {
 		})
 	}
 
-	dataList := []dto.UserTaskUploadResponse{}
+	dataList := []entity.UserTaskUploadCore{}
 	for _, v := range data {
-		result := dto.UserTaskUploadResponse{
-			Id:          v.Id.String(),
+
+		userData, _ := handler.userUsecase.ReadSpecificUser(v.UserId)
+		taskData, _ := handler.taskUsecase.FindById(v.TaskId)
+
+		result := entity.UserTaskUploadCore{
+			Id:          v.Id,
 			TaskId:      v.TaskId,
+			TaskName:    taskData.Title,
 			UserId:      v.UserId,
+			UserName:    userData.Name,
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
@@ -440,10 +447,15 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 		})
 	}
 
+	userData, _ := handler.userUsecase.ReadSpecificUser(data.UserId)
+	taskData, _ := handler.taskUsecase.FindById(data.TaskId)
+
 	response := dto.UserTaskUploadResponse{
 		Id:          data.Id.String(),
 		UserId:      data.UserId,
+		UserName:    userData.Name,
 		TaskId:      data.TaskId,
+		TaskName:    taskData.Title,
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
@@ -535,11 +547,15 @@ func (handler *TaskController) FindAllUserRequestTask(e echo.Context) error {
 
 	dataList := []entity.UserTaskSubmissionCore{}
 	for _, v := range data {
+
+		userData, _ := handler.userUsecase.ReadSpecificUser(v.UserId)
+
 		result := entity.UserTaskSubmissionCore{
 			Id:          v.Id,
 			Title:       v.Title,
 			Point:       v.Point,
 			UserId:      v.UserId,
+			UserName:    userData.Name,
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
@@ -586,5 +602,4 @@ func (handler *TaskController) FindAllRequestTaskHistory(e echo.Context) error {
 		"message": "get all user task request history",
 		"data":    dataList,
 	})
-
 }

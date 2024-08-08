@@ -23,7 +23,9 @@ type TaskResponseDetail struct {
 type UserTaskUploadResponse struct {
 	Id          string
 	TaskId      string
+	TaskName    string
 	UserId      string
+	UserName    string
 	Image       string
 	Description string
 	Status      string

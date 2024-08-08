@@ -4,6 +4,7 @@ import (
 	"errors"
 	"mime/multipart"
 	"strconv"
+	"time"
 	"tugaskita/features/task/entity"
 	"tugaskita/features/task/model"
 	user "tugaskita/features/user/entity"
@@ -149,7 +150,17 @@ func (taskRepo *TaskRepository) FindAllClaimedTask(userId string) ([]entity.User
 	var task []model.UserTaskUpload
 	taskRepo.db.Where("user_id=?", userId).Find(&task)
 
-	dataTask := entity.ListTaskUserModelToTaskUserCore(task)
+	dataTask := make([]entity.UserTaskUploadCore, len(task))
+	for i, v := range task {
+		dataTask[i] = entity.UserTaskUploadCore{
+			Id:          v.Id,
+			TaskId:      v.TaskId,
+			UserId:      v.UserId,
+			Image:       v.Image,
+			Description: v.Description,
+			Status:      v.Status,
+		}
+	}
 	return dataTask, nil
 }
 
@@ -165,11 +176,15 @@ func (taskRepo *TaskRepository) FindAllRequestTaskHistory(userId string) ([]enti
 // FindAllTaskNotClaimed implements entity.TaskDataInterface.
 func (taskRepo *TaskRepository) FindTasksNotClaimedByUser(userId string) ([]entity.TaskCore, error) {
 	var tasks []model.Task
+
+	currentDate := time.Now().Format("2006-01-02")
+
 	taskRepo.db.Raw(`
-		SELECT * FROM tasks WHERE id NOT IN (
+		SELECT * FROM tasks 
+		WHERE id NOT IN (
 			SELECT task_id FROM user_task_uploads WHERE user_id = ?
-		)
-	`, userId).Scan(&tasks)
+		) AND status = 'Aktif' AND end_date >= ?
+	`, userId, currentDate).Scan(&tasks)
 
 	data := entity.ListTaskModelToTaskCore(tasks)
 	return data, nil
