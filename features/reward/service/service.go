@@ -87,16 +87,20 @@ func (rewardUC *RewardService) FindById(rewardId string) (entity.RewardCore, err
 }
 
 // UpdateReward implements entity.RewardUseCaseInterface.
-func (rewardUC *RewardService) UpdateReward(rewardId string, data entity.RewardCore) error {
-	if data.Name == "" || data.Image == "" {
-		return errors.New("name and image can't be empty")
+func (rewardUC *RewardService) UpdateReward(rewardId string, data entity.RewardCore, image *multipart.FileHeader) error {
+	if data.Name == "" {
+		return errors.New("name can't be empty")
 	}
 
 	if data.Price < 0 || data.Stock < 0 {
 		return errors.New("price and stock can't less then 0")
 	}
 
-	err := rewardUC.RewardRepo.UpdateReward(rewardId, data)
+	if image != nil && image.Size > 10*1024*1024 {
+		return errors.New("image file size should be less than 10 MB")
+	}
+
+	err := rewardUC.RewardRepo.UpdateReward(rewardId, data, image)
 	if err != nil {
 		return err
 	}

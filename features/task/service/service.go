@@ -62,7 +62,7 @@ func (taskUC *taskService) CreateTask(data entity.TaskCore) error {
 // DeleteTask implements entity.TaskCoreUseCaseInterface.
 func (taskUC *taskService) DeleteTask(taskId string) error {
 	if taskId == "" {
-		return errors.New("insert user id")
+		return errors.New("insert task id")
 	}
 
 	_, err := taskUC.TaskRepo.FindById(taskId)

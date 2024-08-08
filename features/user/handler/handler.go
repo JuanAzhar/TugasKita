@@ -125,7 +125,9 @@ func (handler *UserController) ReadSpecificUser(e echo.Context) error {
 	response := dto.UserResponse{
 		Id:         data.ID,
 		Name:       data.Name,
+		Role:       data.Role,
 		Email:      data.Email,
+		Image:      data.Image,
 		Point:      data.Point,
 		TotalPoint: data.TotalPoint,
 	}
@@ -163,6 +165,7 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 	response := dto.UserResponse{
 		Id:         data.ID,
 		Name:       data.Name,
+		Image:      data.Image,
 		Email:      data.Email,
 		Point:      data.Point,
 		TotalPoint: data.TotalPoint,
@@ -200,7 +203,9 @@ func (handler *UserController) ReadAllUser(e echo.Context) error {
 		result := dto.UserResponse{
 			Id:         v.ID,
 			Name:       v.Name,
+			Image:      v.Image,
 			Email:      v.Email,
+			Role:       v.Role,
 			Point:      v.Point,
 			TotalPoint: v.TotalPoint,
 		}

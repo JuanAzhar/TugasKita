@@ -185,6 +185,18 @@ func (handler *RewardController) UpdateReward(e echo.Context) error {
 		})
 	}
 
+	image, err := e.FormFile("image")
+	if err != nil {
+		if err == http.ErrMissingFile {
+			return e.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "No file uploaded",
+			})
+		}
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error uploading file",
+		})
+	}
+
 	rewardData := entity.RewardCore{
 		Name:  data.Name,
 		Stock: data.Stock,
@@ -192,7 +204,7 @@ func (handler *RewardController) UpdateReward(e echo.Context) error {
 		Image: data.Image,
 	}
 
-	errUpdate := handler.rewardUsecase.UpdateReward(idParams, rewardData)
+	errUpdate := handler.rewardUsecase.UpdateReward(idParams, rewardData, image)
 	if errUpdate != nil {
 		return e.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Error updating reward",
@@ -222,11 +234,15 @@ func (handler *RewardController) FindAllRewardHistory(e echo.Context) error {
 
 	dataList := []dto.RewardRequestResponse{}
 	for _, v := range data {
+
+		rewardData, _ := handler.rewardUsecase.FindById(v.RewardId)
+
 		result := dto.RewardRequestResponse{
-			Id:       v.Id.String(),
-			RewardId: v.RewardId,
-			UserId:   v.UserId,
-			Status:   v.Status,
+			Id:         v.Id.String(),
+			RewardId:   v.RewardId,
+			RewardName: rewardData.Name,
+			UserId:     v.UserId,
+			Status:     v.Status,
 		}
 		dataList = append(dataList, result)
 	}
@@ -384,9 +400,9 @@ func (handler *RewardController) UpdateReqRewardStatus(e echo.Context) error {
 	rewardData, _ := handler.rewardUsecase.FindUserRewardById(idParams)
 
 	status := entity.UserRewardRequestCore{
-		RewardId:   rewardData.RewardId,
-		UserId:     rewardData.UserId,
-		Status:     data.Status,
+		RewardId: rewardData.RewardId,
+		UserId:   rewardData.UserId,
+		Status:   data.Status,
 	}
 
 	errUpdate := handler.rewardUsecase.UpdateReqRewardStatus(idParams, status)

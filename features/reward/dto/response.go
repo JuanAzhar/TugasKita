@@ -9,8 +9,9 @@ type RewardResponse struct {
 }
 
 type RewardRequestResponse struct {
-	Id       string
-	RewardId string
-	UserId   string
-	Status   string
+	Id         string
+	RewardId   string
+	RewardName string
+	UserId     string
+	Status     string
 }
