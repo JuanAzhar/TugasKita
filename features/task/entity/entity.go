@@ -30,6 +30,7 @@ type UserTaskUploadCore struct {
 	Image       string
 	Description string
 	Status      string
+	Message     string
 }
 
 type UserTaskSubmissionCore struct {
@@ -41,4 +42,5 @@ type UserTaskSubmissionCore struct {
 	Description string
 	Point       int
 	Status      string
+	Message     string
 }

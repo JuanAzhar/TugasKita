@@ -188,11 +188,16 @@ func (rewardRepo *RewardRepository) FindUserRewardById(id string) (entity.UserRe
 		return entity.UserRewardRequestCore{}, errData
 	}
 
+	rewardData, _ := rewardRepo.FindById(data.RewardId)
+	userData, _ := rewardRepo.userRepository.ReadSpecificUser(data.UserId)
+
 	userCore := entity.UserRewardRequestCore{
-		Id:       data.Id,
-		RewardId: data.RewardId,
-		UserId:   data.UserId,
-		Status:   data.Status,
+		Id:         data.Id,
+		RewardId:   data.RewardId,
+		RewardName: rewardData.Name,
+		UserName:   userData.Name,
+		UserId:     data.UserId,
+		Status:     data.Status,
 	}
 
 	return userCore, nil

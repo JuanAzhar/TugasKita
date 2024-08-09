@@ -58,6 +58,7 @@ func TaskUserModelToTaskUserCore(data model.UserTaskUpload) UserTaskUploadCore {
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		Message:     data.Message,
 	}
 
 }
@@ -70,6 +71,7 @@ func TaskUserCoreToTaskUserModel(data UserTaskUploadCore) model.UserTaskUpload {
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		Message:     data.Message,
 	}
 }
 
@@ -91,10 +93,11 @@ func TaskUserReqModelToTaskUserReqCore(data model.UserTaskSubmission) UserTaskSu
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		Message:     data.Message,
 	}
 }
 
-func TaskUserReqCoreToTaskUserReqModel(data UserTaskSubmissionCore) model.UserTaskSubmission{
+func TaskUserReqCoreToTaskUserReqModel(data UserTaskSubmissionCore) model.UserTaskSubmission {
 	return model.UserTaskSubmission{
 		Id:          data.Id,
 		Title:       data.Title,
@@ -103,6 +106,7 @@ func TaskUserReqCoreToTaskUserReqModel(data UserTaskSubmissionCore) model.UserTa
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		Message:     data.Message,
 	}
 }
 
