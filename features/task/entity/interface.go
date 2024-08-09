@@ -10,7 +10,9 @@ type TaskDataInterface interface {
 	DeleteTask(taskId string) error
 
 	UpdateTaskStatus(taskId string, data UserTaskUploadCore) error
+	UpdateTaskReqStatus(id string, data UserTaskSubmissionCore) error
 	FindUserTaskById(id string) (UserTaskUploadCore, error)
+	FindUserTaskReqById(id string) (UserTaskSubmissionCore, error)
 	FindAllUserTask() ([]UserTaskUploadCore, error)
 
 	UploadTask(input UserTaskUploadCore, image *multipart.FileHeader) error
@@ -29,7 +31,9 @@ type TaskUseCaseInterface interface {
 	DeleteTask(taskId string) error
 
 	UpdateTaskStatus(taskId string, data UserTaskUploadCore) error
+	UpdateTaskReqStatus(id string, data UserTaskSubmissionCore) error
 	FindUserTaskById(id string) (UserTaskUploadCore, error)
+	FindUserTaskReqById(id string) (UserTaskSubmissionCore, error)
 	FindAllUserTask() ([]UserTaskUploadCore, error)
 
 	UploadTask(input UserTaskUploadCore, image *multipart.FileHeader) error

@@ -17,6 +17,7 @@ type UserTaskUploadRequest struct {
 	Image       string `json:"image" form:"image"`
 	Description string `json:"description" form:"description"`
 	Status      string `json:"status"`
+	Message     string `json:"message"`
 }
 
 type UserReqTaskRequest struct {
@@ -24,4 +25,6 @@ type UserReqTaskRequest struct {
 	Image       string `json:"image" form:"image"`
 	Description string `json:"description" form:"description"`
 	Point       int    `json:"point" form:"point"`
+	Status      string `json:"status" form:"status"`
+	Message     string `json:"message"`
 }

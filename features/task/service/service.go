@@ -154,6 +154,16 @@ func (taskUC *taskService) UpdateTaskStatus(taskId string, data entity.UserTaskU
 	return nil
 }
 
+// UpdateTaskReqStatus implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) UpdateTaskReqStatus(id string, data entity.UserTaskSubmissionCore) error {
+	err := taskUC.TaskRepo.UpdateTaskReqStatus(id, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // FindAllClaimedTask implements entity.TaskUseCaseInterface.
 func (taskUC *taskService) FindAllClaimedTask(userId string) ([]entity.UserTaskUploadCore, error) {
 	data, err := taskUC.TaskRepo.FindAllClaimedTask(userId)
@@ -222,6 +232,16 @@ func (taskUC *taskService) FindUserTaskById(id string) (entity.UserTaskUploadCor
 	task, err := taskUC.TaskRepo.FindUserTaskById(id)
 	if err != nil {
 		return entity.UserTaskUploadCore{}, err
+	}
+
+	return task, nil
+}
+
+// FindUserTaskReqById implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindUserTaskReqById(id string) (entity.UserTaskSubmissionCore, error) {
+	task, err := taskUC.TaskRepo.FindUserTaskReqById(id)
+	if err != nil {
+		return entity.UserTaskSubmissionCore{}, err
 	}
 
 	return task, nil

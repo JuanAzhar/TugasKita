@@ -29,13 +29,17 @@ type UserTaskUploadResponse struct {
 	Image       string
 	Description string
 	Status      string
+	Message     string
 }
 
 type UserReqTaksResponse struct {
 	Id          string
 	Title       string
 	UserId      string
+	UserName    string
 	Image       string
 	Description string
 	Point       int
+	Status      string
+	Message     string
 }

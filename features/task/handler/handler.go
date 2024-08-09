@@ -274,6 +274,7 @@ func (handler *TaskController) UpdateTaskStatus(e echo.Context) error {
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		Message:     data.Message,
 	}
 
 	errUpdate := handler.taskUsecase.UpdateTaskStatus(idParams, status)
@@ -285,7 +286,57 @@ func (handler *TaskController) UpdateTaskStatus(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusOK, map[string]interface{}{
-		"message": "task updated successfully",
+		"message": "task status updated",
+	})
+}
+
+func (handler *TaskController) UpdateTaskReqStatus(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	idParams := e.Param("id")
+
+	data := dto.UserReqTaskRequest{}
+	if errBind := e.Bind(&data); errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error binding data",
+		})
+	}
+
+	//get userId & taskId
+	dataTask, _ := handler.taskUsecase.FindUserTaskReqById(idParams)
+
+	status := entity.UserTaskSubmissionCore{
+		UserId:      dataTask.UserId,
+		UserName:    dataTask.UserName,
+		Title:       data.Title,
+		Image:       data.Image,
+		Description: data.Description,
+		Point:       data.Point,
+		Status:      data.Status,
+		Message:     data.Message,
+	}
+
+	errUpdate := handler.taskUsecase.UpdateTaskReqStatus(idParams, status)
+	if errUpdate != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error updating request task status",
+			"error":   errUpdate.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "task request status updated",
 	})
 }
 
@@ -459,6 +510,50 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		Message:     data.Message,
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get task",
+		"data":    response,
+	})
+}
+
+func (handler *TaskController) FindUserTaskReqyId(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	idParams := e.Param("id")
+
+	data, err := handler.taskUsecase.FindUserTaskReqById(idParams)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get specific task",
+		})
+	}
+
+	userData, _ := handler.userUsecase.ReadSpecificUser(data.UserId)
+
+	response := dto.UserReqTaksResponse{
+		Id:          data.Id.String(),
+		Title:       data.Title,
+		UserId:      data.UserId,
+		UserName:    userData.Name,
+		Point:       data.Point,
+		Image:       data.Image,
+		Description: data.Description,
+		Status:      data.Status,
+		Message:     data.Message,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{

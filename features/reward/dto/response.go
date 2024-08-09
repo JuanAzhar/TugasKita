@@ -13,5 +13,6 @@ type RewardRequestResponse struct {
 	RewardId   string
 	RewardName string
 	UserId     string
+	UserNaame  string
 	Status     string
 }

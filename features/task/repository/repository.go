@@ -145,6 +145,47 @@ func (taskRepo *TaskRepository) UpdateTaskStatus(taskId string, data entity.User
 	return nil
 }
 
+// UpdateTaskReqStatus implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) UpdateTaskReqStatus(id string, data entity.UserTaskSubmissionCore) error {
+	var pointTask model.UserTaskSubmission
+	var userData userModel.Users
+	taskData := entity.TaskUserReqCoreToTaskUserReqModel(data)
+
+	// get user
+	errUser := taskRepo.db.Where("id=?", data.UserId).First(&userData).Error
+	if errUser != nil {
+		return errUser
+	}
+
+	// update status
+	tx := taskRepo.db.Where("id=?", id).Updates(taskData)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	// get task data
+	errData := taskRepo.db.Where("id=?", id).First(&pointTask).Error
+	if errData != nil {
+		return errData
+	}
+
+	if taskData.Status == "Done" {
+		userPoint, _ := strconv.Atoi(userData.Point)
+		count := userPoint + pointTask.Point
+
+		userData.Point = strconv.Itoa(count)
+
+		saveUser := user.UserModelToUserCore(userData)
+
+		updateUser := taskRepo.userRepository.UpdatePoint(data.UserId, saveUser)
+		if updateUser != nil {
+			return updateUser
+		}
+	}
+
+	return nil
+}
+
 // FindAllClaimedTask implements entity.TaskDataInterface.
 func (taskRepo *TaskRepository) FindAllClaimedTask(userId string) ([]entity.UserTaskUploadCore, error) {
 	var task []model.UserTaskUpload
@@ -183,7 +224,7 @@ func (taskRepo *TaskRepository) FindTasksNotClaimedByUser(userId string) ([]enti
 		SELECT * FROM tasks 
 		WHERE id NOT IN (
 			SELECT task_id FROM user_task_uploads WHERE user_id = ?
-		) AND status = 'Aktif' AND end_date >= ?
+		) AND status = 'Active' AND end_date >= ?
 	`, userId, currentDate).Scan(&tasks)
 
 	data := entity.ListTaskModelToTaskCore(tasks)
@@ -259,13 +300,44 @@ func (taskRepo *TaskRepository) FindUserTaskById(id string) (entity.UserTaskUplo
 		return entity.UserTaskUploadCore{}, errData
 	}
 
+	userData, _ := taskRepo.userRepository.ReadSpecificUser(data.UserId)
+	taskData, _ := taskRepo.FindById(data.TaskId)
+
 	userCore := entity.UserTaskUploadCore{
 		Id:          data.Id,
 		TaskId:      data.TaskId,
+		TaskName:    taskData.Title,
 		UserId:      data.UserId,
+		UserName:    userData.Name,
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+	}
+
+	return userCore, nil
+}
+
+// FindUserTaskReqById implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindUserTaskReqById(id string) (entity.UserTaskSubmissionCore, error) {
+	var data model.UserTaskSubmission
+
+	errData := taskRepo.db.Where("id=?", id).First(&data).Error
+	if errData != nil {
+		return entity.UserTaskSubmissionCore{}, errData
+	}
+
+	userData, _ := taskRepo.userRepository.ReadSpecificUser(data.UserId)
+
+	userCore := entity.UserTaskSubmissionCore{
+		Id:          data.Id,
+		Title:       data.Title,
+		UserId:      data.UserId,
+		UserName:    userData.Name,
+		Image:       data.Image,
+		Point:       data.Point,
+		Description: data.Description,
+		Status:      data.Status,
+		Message:     data.Message,
 	}
 
 	return userCore, nil

@@ -361,10 +361,12 @@ func (handler *RewardController) FindUserRewardById(e echo.Context) error {
 	}
 
 	response := dto.RewardRequestResponse{
-		Id:       data.Id.String(),
-		UserId:   data.UserId,
-		RewardId: data.RewardId,
-		Status:   data.Status,
+		Id:         data.Id.String(),
+		UserId:     data.UserId,
+		UserNaame:  data.UserName,
+		RewardId:   data.RewardId,
+		RewardName: data.RewardName,
+		Status:     data.Status,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
