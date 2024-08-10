@@ -128,7 +128,7 @@ func (taskRepo *TaskRepository) UpdateTaskStatus(taskId string, data entity.User
 		return tx.Error
 	}
 
-	if taskData.Status == "Done" {
+	if taskData.Status == "Diterima" {
 		userPoint, _ := strconv.Atoi(userData.Point)
 		count := userPoint + pointTask.Point
 
@@ -169,7 +169,7 @@ func (taskRepo *TaskRepository) UpdateTaskReqStatus(id string, data entity.UserT
 		return errData
 	}
 
-	if taskData.Status == "Done" {
+	if taskData.Status == "Diterima" {
 		userPoint, _ := strconv.Atoi(userData.Point)
 		count := userPoint + pointTask.Point
 
@@ -200,6 +200,7 @@ func (taskRepo *TaskRepository) FindAllClaimedTask(userId string) ([]entity.User
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
+			Message:     v.Message,
 		}
 	}
 	return dataTask, nil
@@ -221,11 +222,12 @@ func (taskRepo *TaskRepository) FindTasksNotClaimedByUser(userId string) ([]enti
 	currentDate := time.Now().Format("2006-01-02")
 
 	taskRepo.db.Raw(`
-		SELECT * FROM tasks 
-		WHERE id NOT IN (
-			SELECT task_id FROM user_task_uploads WHERE user_id = ?
-		) AND status = 'Active' AND end_date >= ?
-	`, userId, currentDate).Scan(&tasks)
+	SELECT * FROM tasks 
+	WHERE id NOT IN (
+		SELECT task_id FROM user_task_uploads 
+		WHERE user_id = ? AND status != 'Ditolak'
+	) AND status = 'Active' AND end_date >= ?
+`, userId, currentDate).Scan(&tasks)
 
 	data := entity.ListTaskModelToTaskCore(tasks)
 	return data, nil
@@ -286,6 +288,7 @@ func (taskRepo *TaskRepository) FindAllUserTask() ([]entity.UserTaskUploadCore, 
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
+			Message:     v.Message,
 		}
 	}
 	return mapData, nil
@@ -403,4 +406,31 @@ func (taskRepo *TaskRepository) FindAllRequestTask() ([]entity.UserTaskSubmissio
 		}
 	}
 	return mapData, nil
+}
+
+// CountUserClearTask implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) CountUserClearTask(id string) (int, error) {
+	var countUpload int64
+	var countSubmission int64
+
+	// Menghitung jumlah data pada tabel UserTaskUpload dengan status 'Diterima'
+	errUpload := taskRepo.db.Model(&model.UserTaskUpload{}).
+		Where("user_id = ? AND status = ?", id, "Diterima").
+		Count(&countUpload).Error
+	if errUpload != nil {
+		return 0, errUpload
+	}
+
+	// Menghitung jumlah data pada tabel UserTaskSubmission dengan status 'Diterima'
+	errSubmission := taskRepo.db.Model(&model.UserTaskSubmission{}).
+		Where("user_id = ? AND status = ?", id, "Diterima").
+		Count(&countSubmission).Error
+	if errSubmission != nil {
+		return 0, errSubmission
+	}
+
+	// Menggabungkan hasil dari kedua tabel
+	totalCount := int(countUpload + countSubmission)
+
+	return totalCount, nil
 }

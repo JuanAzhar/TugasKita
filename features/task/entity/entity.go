@@ -39,6 +39,7 @@ type UserTaskSubmissionCore struct {
 	UserId      string
 	UserName    string
 	Image       string
+	Type        string
 	Description string
 	Point       int
 	Status      string

@@ -278,3 +278,13 @@ func (taskUC *taskService) FindAllRequestTask() ([]entity.UserTaskSubmissionCore
 
 	return userTask, nil
 }
+
+// CountUserClearTask implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) CountUserClearTask(id string) (int, error) {
+	countTask, err := taskUC.TaskRepo.CountUserClearTask(id)
+	if err != nil {
+		return 0, errors.New("error count user clear task")
+	}
+
+	return countTask, nil
+}

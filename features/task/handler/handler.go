@@ -370,6 +370,7 @@ func (handler *TaskController) ReadHistoryTaskUser(e echo.Context) error {
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
+			Message:     v.Message,
 		}
 		dataList = append(dataList, result)
 	}
@@ -465,6 +466,7 @@ func (handler *TaskController) FindAllUserTask(e echo.Context) error {
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
+			Message:     v.Message,
 		}
 		dataList = append(dataList, result)
 	}
@@ -697,4 +699,26 @@ func (handler *TaskController) FindAllRequestTaskHistory(e echo.Context) error {
 		"message": "get all user task request history",
 		"data":    dataList,
 	})
+}
+
+func (handler *TaskController) CountUserClearTask(e echo.Context) error {
+	userId, _, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	count, err := handler.taskUsecase.CountUserClearTask(userId)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get cleared task sum",
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all task cleared sum",
+		"count":    count,
+	})
+
 }

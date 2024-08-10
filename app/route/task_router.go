@@ -27,6 +27,7 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	user.POST("/request", taskController.UploadRequestTaskUser, m.JWTMiddleware())
 	user.GET("/riwayat", taskController.ReadHistoryTaskUser, m.JWTMiddleware())
 	user.GET("/req-riwayat", taskController.FindAllRequestTaskHistory, m.JWTMiddleware())
+	user.GET("/sum-clear", taskController.CountUserClearTask, m.JWTMiddleware())
 
 	admin := e.Group("/admin-task")
 	admin.GET("/:id", taskController.ReadSpecificTask, m.JWTMiddleware())
@@ -37,7 +38,7 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 
 	admin.GET("/user", taskController.FindAllUserTask, m.JWTMiddleware())
 	admin.GET("/user/request", taskController.FindAllUserRequestTask, m.JWTMiddleware())
-	admin.PUT("/user/request/:id", taskController.UpdateTaskReqStatus, m.JWTMiddleware()) //belum tes
+	admin.PUT("/user/request/:id", taskController.UpdateTaskReqStatus, m.JWTMiddleware())
 	admin.PUT("/user/:id", taskController.UpdateTaskStatus, m.JWTMiddleware())
 	admin.GET("/user/:id", taskController.FindUserTaskById, m.JWTMiddleware())
 	admin.GET("/user/request/:id", taskController.FindUserTaskReqyId, m.JWTMiddleware()) //belum tes

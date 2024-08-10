@@ -149,6 +149,16 @@ func (rewardUC *RewardService) UploadRewardRequest(input entity.UserRewardReques
 		return errors.New("not enough stock")
 	}
 
+	count := userPoint - rewardData.Price
+
+	userData.Point = strconv.Itoa(count)
+
+	//update user
+	errUserUpdate := rewardUC.UserRepo.UpdatePoint(input.UserId, userData)
+	if errUserUpdate != nil {
+		return errors.New("failed update user point")
+	}
+
 	err := rewardUC.RewardRepo.UploadRewardRequest(input)
 	if err != nil {
 		return errors.New("failed request reward")
@@ -187,7 +197,7 @@ func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entit
 		return errors.New("failed get user reward request")
 	}
 
-	if rewardReqData.Status == "Done" {
+	if rewardReqData.Status == "Diterima" {
 		return errors.New("you already accept this request")
 	}
 
@@ -195,13 +205,9 @@ func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entit
 		return errors.New("not enough stock")
 	}
 
-	if data.Status == "Done" {
+	if data.Status == "Ditolak" {
 		userPoint, _ := strconv.Atoi(userData.Point)
-		count := userPoint - rewardData.Price
-
-		if count < 0 {
-			return errors.New("not enough point")
-		}
+		count := userPoint + rewardData.Price
 
 		userData.Point = strconv.Itoa(count)
 	}
