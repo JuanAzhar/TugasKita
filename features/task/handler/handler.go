@@ -86,13 +86,14 @@ func (handler *TaskController) ReadAllTask(e echo.Context) error {
 		dataList := []dto.TaskResponse{}
 		for _, v := range data {
 			result := dto.TaskResponse{
-				Id:         v.ID.String(),
-				Title:      v.Title,
-				Point:      v.Point,
-				Status:     v.Status,
-				Type:       v.Type,
-				Start_date: v.Start_date,
-				End_date:   v.End_date,
+				Id:          v.ID.String(),
+				Title:       v.Title,
+				Point:       v.Point,
+				Status:      v.Status,
+				Type:        v.Type,
+				Start_date:  v.Start_date,
+				End_date:    v.End_date,
+				Description: v.Description,
 			}
 			dataList = append(dataList, result)
 		}
@@ -113,13 +114,14 @@ func (handler *TaskController) ReadAllTask(e echo.Context) error {
 		dataList := []dto.TaskResponse{}
 		for _, v := range data {
 			result := dto.TaskResponse{
-				Id:         v.ID.String(),
-				Title:      v.Title,
-				Point:      v.Point,
-				Status:     v.Status,
-				Type:       v.Type,
-				Start_date: v.Start_date,
-				End_date:   v.End_date,
+				Id:          v.ID.String(),
+				Title:       v.Title,
+				Point:       v.Point,
+				Status:      v.Status,
+				Type:        v.Type,
+				Start_date:  v.Start_date,
+				End_date:    v.End_date,
+				Description: v.Description,
 			}
 			dataList = append(dataList, result)
 		}
@@ -656,6 +658,8 @@ func (handler *TaskController) FindAllUserRequestTask(e echo.Context) error {
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
+			Type:        v.Type,
+			Message:     v.Message,
 		}
 		dataList = append(dataList, result)
 	}
@@ -691,6 +695,7 @@ func (handler *TaskController) FindAllRequestTaskHistory(e echo.Context) error {
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
+			Type:        v.Type,
 		}
 		dataList = append(dataList, result)
 	}
@@ -718,7 +723,7 @@ func (handler *TaskController) CountUserClearTask(e echo.Context) error {
 
 	return e.JSON(http.StatusOK, map[string]any{
 		"message": "get all task cleared sum",
-		"count":    count,
+		"count":   count,
 	})
 
 }

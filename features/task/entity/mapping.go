@@ -94,6 +94,7 @@ func TaskUserReqModelToTaskUserReqCore(data model.UserTaskSubmission) UserTaskSu
 		Description: data.Description,
 		Status:      data.Status,
 		Message:     data.Message,
+		Type:        data.Type,
 	}
 }
 
@@ -107,6 +108,7 @@ func TaskUserReqCoreToTaskUserReqModel(data UserTaskSubmissionCore) model.UserTa
 		Description: data.Description,
 		Status:      data.Status,
 		Message:     data.Message,
+		Type:        data.Type,
 	}
 }
 

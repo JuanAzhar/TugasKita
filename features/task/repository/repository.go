@@ -403,6 +403,7 @@ func (taskRepo *TaskRepository) FindAllRequestTask() ([]entity.UserTaskSubmissio
 			Description: v.Description,
 			Point:       v.Point,
 			Status:      v.Status,
+			Type:        v.Type,
 		}
 	}
 	return mapData, nil
