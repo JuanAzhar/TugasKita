@@ -141,6 +141,7 @@ func (rewardRepo *RewardRepository) FindAllUploadReward() ([]entity.UserRewardRe
 		mapData[i] = entity.UserRewardRequestCore{
 			Id:        v.Id,
 			RewardId:  v.RewardId,
+			Price:     v.Price,
 			UserId:    v.UserId,
 			Status:    v.Status,
 			CreatedAt: v.CreatedAt,

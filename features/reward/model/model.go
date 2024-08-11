@@ -17,10 +17,11 @@ type Reward struct {
 }
 
 type UserRewardRequest struct {
-	Id       uuid.UUID
-	RewardId string 
-	UserId   string
-	Status   string `gorm:"type:varchar(20);default:'Perlu Review'" json:"status"`
+	Id        uuid.UUID
+	RewardId  string
+	Price     int
+	UserId    string
+	Status    string `gorm:"type:varchar(20);default:'Perlu Review'" json:"status"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

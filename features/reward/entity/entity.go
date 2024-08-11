@@ -20,9 +20,10 @@ type UserRewardRequestCore struct {
 	Id         uuid.UUID
 	RewardId   string
 	RewardName string
+	Price      int
 	UserId     string
 	UserName   string
 	Status     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }

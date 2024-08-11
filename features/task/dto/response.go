@@ -16,6 +16,7 @@ type TaskResponseDetail struct {
 	Description string `json:"description"`
 	Point       int    `json:"point"`
 	Message     string `json:"message"`
+	Type        string `json:"type"`
 	Status      string `json:"status"`
 	Start_date  string `json:"startDate"`
 	End_date    string `json:"endDate"`

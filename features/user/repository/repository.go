@@ -169,7 +169,13 @@ func (userRepo *userRepository) UpdateSiswa(id string, data entity.UserCore, ima
 		return err
 	}
 
+	hashPassword, err := bcrypt.HashPassword(data.Password)
+	if err != nil {
+		return err
+	}
+
 	dataUser.Image = imageURL
+	dataUser.Password = hashPassword
 
 	tx := userRepo.db.Where("id = ?", id).Updates(&dataUser)
 	if tx.Error != nil {
