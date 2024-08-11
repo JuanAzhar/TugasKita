@@ -372,7 +372,7 @@ func (handler *TaskController) ReadHistoryTaskUser(e echo.Context) error {
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
-			Type:        v.Type,
+			Type:        taskData.Type,
 			Message:     v.Message,
 			CreatedAt:   v.CreatedAt,
 			UpdatedAt:   v.UpdatedAt,
