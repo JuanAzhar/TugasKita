@@ -218,6 +218,62 @@ func (handler *UserController) ReadAllUser(e echo.Context) error {
 	})
 }
 
+func (handler *UserController) UpdateSiswa(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	idParams := e.Param("id")
+
+	data := new(dto.UserRequest)
+	if errBind := e.Bind(data); errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error binding data",
+		})
+	}
+
+	image, err := e.FormFile("image")
+	if err != nil {
+		if err == http.ErrMissingFile {
+			return e.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "No file uploaded",
+			})
+		}
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error uploading file",
+		})
+	}
+
+	userData := entity.UserCore{
+		Name:     data.Name,
+		Email:    data.Email,
+		Password: data.Password,
+		Image:    data.Image,
+		Point:    data.Point,
+	}
+
+	errUpdate := handler.userUsecase.UpdateSiswa(idParams, userData, image)
+	if errUpdate != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error updating user",
+			"error":   errUpdate.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "user updated successfully",
+	})
+}
+
 func (handler *UserController) GetRankUser(e echo.Context) error {
 	data, err := handler.userUsecase.GetRankUser()
 	if err != nil {

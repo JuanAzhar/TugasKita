@@ -15,7 +15,7 @@ func UserRouter(db *gorm.DB, e *echo.Group) {
 	userUseCase := service.New(userRepository)
 	userController := handler.New(userUseCase)
 
-	e.POST("", userController.Register)
+	e.POST("/register", userController.Register)
 	e.POST("/login", userController.Login)
 	e.GET("", userController.ReadAllUser, m.JWTMiddleware())
 	e.GET("/profile", userController.ReadProfileUser, m.JWTMiddleware())
@@ -23,4 +23,5 @@ func UserRouter(db *gorm.DB, e *echo.Group) {
 	e.DELETE("/:id", userController.DeleteUser, m.JWTMiddleware())
 	e.GET("/rank", userController.GetRankUser, m.JWTMiddleware())
 	e.PUT("/change-password", userController.ChangePassword, m.JWTMiddleware())
+	e.PUT("/:id", userController.UpdateSiswa, m.JWTMiddleware())
 }

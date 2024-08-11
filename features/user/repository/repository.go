@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"mime/multipart"
 	"tugaskita/features/user/entity"
 	"tugaskita/features/user/model"
@@ -78,6 +79,7 @@ func (userRepo *userRepository) ReadSpecificUser(id string) (user entity.UserCor
 		ID:         data.ID,
 		Name:       data.Name,
 		Email:      data.Email,
+		Image:      data.Image,
 		Point:      data.Point,
 		TotalPoint: data.TotalPoint,
 		Role:       data.Role,
@@ -132,7 +134,7 @@ func (userRepo *userRepository) Register(data entity.UserCore, image *multipart.
 func (userRepo *userRepository) ReadAllUser() ([]entity.UserCore, error) {
 	var dataUser []model.Users
 
-	errData := userRepo.db.Find(&dataUser).Error
+	errData := userRepo.db.Where("role = ?", "user").Find(&dataUser).Error
 	if errData != nil {
 		return nil, errData
 	}
@@ -143,12 +145,45 @@ func (userRepo *userRepository) ReadAllUser() ([]entity.UserCore, error) {
 			ID:         value.ID,
 			Name:       value.Name,
 			Email:      value.Email,
+			Image:      value.Image,
 			Role:       value.Role,
 			Point:      value.Point,
 			TotalPoint: value.TotalPoint,
 		}
 	}
 	return mapData, nil
+}
+
+// UpdateSiswa implements entity.UserDataInterface.
+func (userRepo *userRepository) UpdateSiswa(id string, data entity.UserCore, image *multipart.FileHeader) error {
+	dataUser := entity.UserCoreToUserModel(data)
+
+	file, err := image.Open()
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
+	if err != nil {
+		return err
+	}
+
+	dataUser.Image = imageURL
+
+	tx := userRepo.db.Where("id = ?", id).Updates(&dataUser)
+	if tx.Error != nil {
+		if tx.Error != nil {
+			return tx.Error
+		}
+		return tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return errors.New("user not found")
+	}
+
+	return nil
 }
 
 // UpdatePoint implements entity.UserDataInterface.

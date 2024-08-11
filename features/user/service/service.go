@@ -113,6 +113,29 @@ func (userUC *userUseCase) GetRankUser() ([]entity.UserCore, error) {
 	return users, nil
 }
 
+// UpdateSiswa implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) UpdateSiswa(id string, data entity.UserCore, image *multipart.FileHeader) error {
+	if data.Email == "" || data.Password == "" {
+		return errors.New("error, email or password can't be empty")
+	}
+	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	match, _ := regexp.MatchString(emailRegex, data.Email)
+	if !match {
+		return errors.New("error. email format not valid")
+	}
+
+	if image != nil && image.Size > 10*1024*1024 {
+		return errors.New("image file size should be less than 10 MB")
+	}
+
+	err := userUC.userRepository.UpdateSiswa(id, data, image)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ChangePassword implements entity.UserUseCaseInterface.
 func (userUC *userUseCase) ChangePassword(id string, data entity.UserCore) error {
 	if data.Password == "" {

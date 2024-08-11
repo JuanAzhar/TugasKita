@@ -4,6 +4,7 @@ import "mime/multipart"
 
 type UserDataInterface interface {
 	Register(data UserCore, image *multipart.FileHeader) (row int, err error)
+	UpdateSiswa(id string, data UserCore, image *multipart.FileHeader) error
 	Login(email, password string) (UserCore, string, error)
 	ReadAllUser() ([]UserCore, error)
 	ReadSpecificUser(id string) (user UserCore, err error)
@@ -16,6 +17,7 @@ type UserDataInterface interface {
 
 type UserUseCaseInterface interface {
 	Register(data UserCore, image *multipart.FileHeader) (row int, err error)
+	UpdateSiswa(id string, data UserCore, image *multipart.FileHeader) error
 	Login(email, password string) (UserCore, string, error)
 	ReadAllUser() ([]UserCore, error)
 	ReadSpecificUser(id string) (user UserCore, err error)

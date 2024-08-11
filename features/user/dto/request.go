@@ -5,4 +5,5 @@ type UserRequest struct {
 	Image    string `json:"image" form:"image"`
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
+	Point    string `json:"point" form:"point"`
 }
