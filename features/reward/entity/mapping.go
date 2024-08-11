@@ -1,31 +1,30 @@
 package entity
 
 import (
-	"time"
 	"tugaskita/features/reward/model"
 )
 
 func RewardCoreToRewardModel(data RewardCore) model.Reward {
 	return model.Reward{
-		ID:    data.ID,
-		Name:  data.Name,
-		Stock: data.Stock,
-		Price: data.Price,
-		Image: data.Image,
-		CreatedAt: time.Time{},
-		UpdatedAt: time.Time{},
+		ID:        data.ID,
+		Name:      data.Name,
+		Stock:     data.Stock,
+		Price:     data.Price,
+		Image:     data.Image,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
 	}
 }
 
 func RewardModelToRewardCore(data model.Reward) RewardCore {
 	return RewardCore{
-		ID:    data.ID,
-		Name:  data.Name,
-		Stock: data.Stock,
-		Price: data.Price,
-		Image: data.Image,
-		CreatedAt: time.Time{},
-		UpdatedAt: time.Time{},
+		ID:        data.ID,
+		Name:      data.Name,
+		Stock:     data.Stock,
+		Price:     data.Price,
+		Image:     data.Image,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
 	}
 }
 
@@ -38,25 +37,29 @@ func ListRewardModelToRewardCore(data []model.Reward) []RewardCore {
 	return dataReward
 }
 
-func RewardUserModelToRewardUserCore(data model.UserRewardRequest) UserRewardRequestCore{
+func RewardUserModelToRewardUserCore(data model.UserRewardRequest) UserRewardRequestCore {
 	return UserRewardRequestCore{
-		Id: data.Id,
-		RewardId: data.RewardId,
-		UserId: data.UserId,
-		Status: data.Status,
+		Id:        data.Id,
+		RewardId:  data.RewardId,
+		UserId:    data.UserId,
+		Status:    data.Status,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
 	}
 }
 
-func RewardUserCoreToRewardUserModel(data UserRewardRequestCore) model.UserRewardRequest{
+func RewardUserCoreToRewardUserModel(data UserRewardRequestCore) model.UserRewardRequest {
 	return model.UserRewardRequest{
-		Id: data.Id,
-		RewardId: data.RewardId,
-		UserId: data.UserId,
-		Status: data.Status,
+		Id:        data.Id,
+		RewardId:  data.RewardId,
+		UserId:    data.UserId,
+		Status:    data.Status,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
 	}
-} 
+}
 
-func ListRewardUserModelToListRewardUserCore(data []model.UserRewardRequest) []UserRewardRequestCore{
+func ListRewardUserModelToListRewardUserCore(data []model.UserRewardRequest) []UserRewardRequestCore {
 	dataReward := []UserRewardRequestCore{}
 	for _, v := range data {
 		result := RewardUserModelToRewardUserCore(v)

@@ -85,14 +85,16 @@ func (handler *RewardController) ReadAllReward(e echo.Context) error {
 		})
 	}
 
-	dataList := []dto.RewardResponse{}
+	dataList := []entity.RewardCore{}
 	for _, v := range data {
-		result := dto.RewardResponse{
-			Id:    v.ID.String(),
-			Name:  v.Name,
-			Stock: v.Stock,
-			Price: v.Price,
-			Image: v.Image,
+		result := entity.RewardCore{
+			ID:        v.ID,
+			Name:      v.Name,
+			Stock:     v.Stock,
+			Price:     v.Price,
+			Image:     v.Image,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
 		}
 		dataList = append(dataList, result)
 	}
@@ -121,12 +123,14 @@ func (handler *RewardController) ReadSpecificReward(e echo.Context) error {
 		})
 	}
 
-	response := dto.RewardResponse{
-		Id:    data.ID.String(),
-		Name:  data.Name,
-		Stock: data.Stock,
-		Price: data.Price,
-		Image: data.Image,
+	response := entity.RewardCore{
+		ID:        data.ID,
+		Name:      data.Name,
+		Stock:     data.Stock,
+		Price:     data.Price,
+		Image:     data.Image,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
@@ -232,17 +236,19 @@ func (handler *RewardController) FindAllRewardHistory(e echo.Context) error {
 		})
 	}
 
-	dataList := []dto.RewardRequestResponse{}
+	dataList := []entity.UserRewardRequestCore{}
 	for _, v := range data {
 
 		rewardData, _ := handler.rewardUsecase.FindById(v.RewardId)
 
-		result := dto.RewardRequestResponse{
-			Id:         v.Id.String(),
+		result := entity.UserRewardRequestCore{
+			Id:         v.Id,
 			RewardId:   v.RewardId,
 			RewardName: rewardData.Name,
 			UserId:     v.UserId,
 			Status:     v.Status,
+			CreatedAt:  v.CreatedAt,
+			UpdatedAt:  v.UpdatedAt,
 		}
 		dataList = append(dataList, result)
 	}
@@ -287,6 +293,8 @@ func (handler *RewardController) FindAllUploadReward(e echo.Context) error {
 			UserId:     v.UserId,
 			UserName:   userData.Name,
 			Status:     v.Status,
+			CreatedAt:  v.CreatedAt,
+			UpdatedAt:  v.UpdatedAt,
 		}
 		dataList = append(dataList, result)
 	}
@@ -363,10 +371,12 @@ func (handler *RewardController) FindUserRewardById(e echo.Context) error {
 	response := dto.RewardRequestResponse{
 		Id:         data.Id.String(),
 		UserId:     data.UserId,
-		UserNaame:  data.UserName,
+		UserName:   data.UserName,
 		RewardId:   data.RewardId,
 		RewardName: data.RewardName,
 		Status:     data.Status,
+		CreatedAt:  data.CreatedAt,
+		UpdatedAt:  data.UpdatedAt,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{

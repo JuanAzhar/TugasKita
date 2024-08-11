@@ -1,11 +1,15 @@
 package dto
 
+import "time"
+
 type RewardResponse struct {
 	Id    string
 	Name  string
 	Stock int
 	Price int
 	Image string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type RewardRequestResponse struct {
@@ -13,6 +17,8 @@ type RewardRequestResponse struct {
 	RewardId   string
 	RewardName string
 	UserId     string
-	UserNaame  string
+	UserName  string
 	Status     string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }

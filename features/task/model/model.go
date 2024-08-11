@@ -28,7 +28,10 @@ type UserTaskUpload struct {
 	Image       string
 	Description string
 	Status      string `gorm:"type:varchar(20);default:'Perlu Review'" json:"status"`
+	Type        string `gorm:"default:'Task'" json:"type"`
 	Message     string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type UserTaskSubmission struct {
@@ -36,9 +39,11 @@ type UserTaskSubmission struct {
 	Title       string
 	UserId      string
 	Image       string
-	Type        string `gorm:"type:varchar(w0);default:'Submission'" json:"type"`
+	Type        string `gorm:"type:varchar(20);default:'Submission'" json:"type"`
 	Description string
 	Point       int
 	Status      string `gorm:"type:varchar(20);default:'Perlu Review'" json:"status"`
 	Message     string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }

@@ -23,4 +23,6 @@ type UserRewardRequestCore struct {
 	UserId     string
 	UserName   string
 	Status     string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

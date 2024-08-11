@@ -139,10 +139,12 @@ func (rewardRepo *RewardRepository) FindAllUploadReward() ([]entity.UserRewardRe
 	mapData := make([]entity.UserRewardRequestCore, len(reward))
 	for i, v := range reward {
 		mapData[i] = entity.UserRewardRequestCore{
-			Id:       v.Id,
-			RewardId: v.RewardId,
-			UserId:   v.UserId,
-			Status:   v.Status,
+			Id:        v.Id,
+			RewardId:  v.RewardId,
+			UserId:    v.UserId,
+			Status:    v.Status,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
 		}
 	}
 	return mapData, nil
@@ -198,6 +200,8 @@ func (rewardRepo *RewardRepository) FindUserRewardById(id string) (entity.UserRe
 		UserName:   userData.Name,
 		UserId:     data.UserId,
 		Status:     data.Status,
+		CreatedAt:  data.CreatedAt,
+		UpdatedAt:  data.UpdatedAt,
 	}
 
 	return userCore, nil

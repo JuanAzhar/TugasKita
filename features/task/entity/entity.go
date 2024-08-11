@@ -30,7 +30,10 @@ type UserTaskUploadCore struct {
 	Image       string
 	Description string
 	Status      string
+	Type        string
 	Message     string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type UserTaskSubmissionCore struct {
@@ -44,4 +47,6 @@ type UserTaskSubmissionCore struct {
 	Point       int
 	Status      string
 	Message     string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }

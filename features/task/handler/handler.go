@@ -372,7 +372,10 @@ func (handler *TaskController) ReadHistoryTaskUser(e echo.Context) error {
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
+			Type:        v.Type,
 			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 		dataList = append(dataList, result)
 	}
@@ -468,7 +471,10 @@ func (handler *TaskController) FindAllUserTask(e echo.Context) error {
 			Image:       v.Image,
 			Description: v.Description,
 			Status:      v.Status,
+			Type:        v.Type,
 			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 		dataList = append(dataList, result)
 	}
@@ -505,8 +511,8 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 	userData, _ := handler.userUsecase.ReadSpecificUser(data.UserId)
 	taskData, _ := handler.taskUsecase.FindById(data.TaskId)
 
-	response := dto.UserTaskUploadResponse{
-		Id:          data.Id.String(),
+	response := entity.UserTaskUploadCore{
+		Id:          data.Id,
 		UserId:      data.UserId,
 		UserName:    userData.Name,
 		TaskId:      data.TaskId,
@@ -514,7 +520,10 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		Type:        data.Type,
 		Message:     data.Message,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
@@ -548,8 +557,8 @@ func (handler *TaskController) FindUserTaskReqyId(e echo.Context) error {
 
 	userData, _ := handler.userUsecase.ReadSpecificUser(data.UserId)
 
-	response := dto.UserReqTaksResponse{
-		Id:          data.Id.String(),
+	response := entity.UserTaskSubmissionCore{
+		Id:          data.Id,
 		Title:       data.Title,
 		UserId:      data.UserId,
 		UserName:    userData.Name,
@@ -557,7 +566,10 @@ func (handler *TaskController) FindUserTaskReqyId(e echo.Context) error {
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		Type:        data.Type,
 		Message:     data.Message,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
@@ -610,16 +622,9 @@ func (handler *TaskController) UploadRequestTaskUser(e echo.Context) error {
 		})
 	}
 
-	dataRespon := dto.UserReqTaksResponse{
-		Title:       input.Title,
-		Image:       input.Image,
-		Description: input.Description,
-		Point:       input.Point,
-	}
-
 	return e.JSON(http.StatusOK, map[string]any{
 		"message": "succes upload request task",
-		"data":    dataRespon,
+		"data":    dataInput,
 	})
 }
 
@@ -660,6 +665,8 @@ func (handler *TaskController) FindAllUserRequestTask(e echo.Context) error {
 			Status:      v.Status,
 			Type:        v.Type,
 			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 		dataList = append(dataList, result)
 	}
@@ -696,6 +703,8 @@ func (handler *TaskController) FindAllRequestTaskHistory(e echo.Context) error {
 			Description: v.Description,
 			Status:      v.Status,
 			Type:        v.Type,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 		dataList = append(dataList, result)
 	}

@@ -201,6 +201,8 @@ func (taskRepo *TaskRepository) FindAllClaimedTask(userId string) ([]entity.User
 			Description: v.Description,
 			Status:      v.Status,
 			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 	}
 	return dataTask, nil
@@ -211,8 +213,26 @@ func (taskRepo *TaskRepository) FindAllRequestTaskHistory(userId string) ([]enti
 	var task []model.UserTaskSubmission
 	taskRepo.db.Where("user_id=?", userId).Find(&task)
 
-	dataTask := entity.ListTaskUserReqModelToTaskUserReqCore(task)
-	return dataTask, nil
+	mapData := make([]entity.UserTaskSubmissionCore, len(task))
+	for i, v := range task {
+
+		userData, _ := taskRepo.userRepository.ReadSpecificUser(userId)
+		mapData[i] = entity.UserTaskSubmissionCore{
+			Id:          v.Id,
+			UserId:      v.UserId,
+			UserName:    userData.Name,
+			Title:       v.Title,
+			Type:        v.Type,
+			Point:       v.Point,
+			Image:       v.Image,
+			Description: v.Description,
+			Status:      v.Status,
+			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+	}
+	return mapData, nil
 }
 
 // FindAllTaskNotClaimed implements entity.TaskDataInterface.
@@ -260,6 +280,8 @@ func (taskRepo *TaskRepository) UploadTask(input entity.UserTaskUploadCore, imag
 		Image:       input.Image,
 		Description: input.Description,
 		Status:      input.Status,
+		CreatedAt:   input.CreatedAt,
+		UpdatedAt:   input.UpdatedAt,
 	}
 
 	errUpload := taskRepo.db.Save(&inputData)
@@ -289,6 +311,8 @@ func (taskRepo *TaskRepository) FindAllUserTask() ([]entity.UserTaskUploadCore, 
 			Description: v.Description,
 			Status:      v.Status,
 			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 	}
 	return mapData, nil
@@ -315,6 +339,8 @@ func (taskRepo *TaskRepository) FindUserTaskById(id string) (entity.UserTaskUplo
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 	return userCore, nil
@@ -341,6 +367,9 @@ func (taskRepo *TaskRepository) FindUserTaskReqById(id string) (entity.UserTaskS
 		Description: data.Description,
 		Status:      data.Status,
 		Message:     data.Message,
+		Type:        data.Type,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 	return userCore, nil
@@ -374,6 +403,8 @@ func (taskRepo *TaskRepository) UploadTaskRequest(input entity.UserTaskSubmissio
 		Image:       input.Image,
 		Description: input.Description,
 		Status:      input.Status,
+		CreatedAt:   input.CreatedAt,
+		UpdatedAt:   input.UpdatedAt,
 	}
 
 	errUpload := taskRepo.db.Save(&inputData)
@@ -403,7 +434,10 @@ func (taskRepo *TaskRepository) FindAllRequestTask() ([]entity.UserTaskSubmissio
 			Description: v.Description,
 			Point:       v.Point,
 			Status:      v.Status,
+			Message:     v.Message,
 			Type:        v.Type,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 	}
 	return mapData, nil
