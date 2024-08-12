@@ -734,5 +734,4 @@ func (handler *TaskController) CountUserClearTask(e echo.Context) error {
 		"message": "get all task cleared sum",
 		"count":   count,
 	})
-
 }

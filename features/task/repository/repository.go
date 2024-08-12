@@ -130,9 +130,13 @@ func (taskRepo *TaskRepository) UpdateTaskStatus(taskId string, data entity.User
 
 	if taskData.Status == "Diterima" {
 		userPoint, _ := strconv.Atoi(userData.Point)
+		userTotalPoint, _ := strconv.Atoi(userData.TotalPoint)
+		
 		count := userPoint + pointTask.Point
+		countTotal := userTotalPoint + pointTask.Point
 
 		userData.Point = strconv.Itoa(count)
+		userData.TotalPoint = strconv.Itoa(countTotal)
 
 		saveUser := user.UserModelToUserCore(userData)
 
@@ -171,9 +175,13 @@ func (taskRepo *TaskRepository) UpdateTaskReqStatus(id string, data entity.UserT
 
 	if taskData.Status == "Diterima" {
 		userPoint, _ := strconv.Atoi(userData.Point)
+		userTotalPoint, _ := strconv.Atoi(userData.TotalPoint)
+		
 		count := userPoint + pointTask.Point
+		countTotal := userTotalPoint + pointTask.Point
 
 		userData.Point = strconv.Itoa(count)
+		userData.TotalPoint = strconv.Itoa(countTotal)
 
 		saveUser := user.UserModelToUserCore(userData)
 
