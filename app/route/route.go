@@ -12,4 +12,5 @@ func New(e *echo.Echo, db *gorm.DB) {
 	UserRouter(db, user)
 	TaskRouter(db, base)
 	RewardRouter(db, base)
+	PenaltyRouter(db, base)
 }
