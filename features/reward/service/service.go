@@ -134,7 +134,7 @@ func (rewardUC *RewardService) UploadRewardRequest(input entity.UserRewardReques
 		return errors.New("failed get user")
 	}
 
-	userPoint, _ := strconv.Atoi(userData.Point)
+	userPoint, _ := strconv.Atoi(userData.TotalPoint)
 
 	rewardData, errReward := rewardUC.RewardRepo.FindById(input.RewardId)
 	if errReward != nil {
@@ -151,7 +151,7 @@ func (rewardUC *RewardService) UploadRewardRequest(input entity.UserRewardReques
 
 	count := userPoint - rewardData.Price
 
-	userData.Point = strconv.Itoa(count)
+	userData.TotalPoint = strconv.Itoa(count)
 
 	//update user
 	errUserUpdate := rewardUC.UserRepo.UpdatePoint(input.UserId, userData)
@@ -206,10 +206,10 @@ func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entit
 	}
 
 	if data.Status == "Ditolak" {
-		userPoint, _ := strconv.Atoi(userData.Point)
+		userPoint, _ := strconv.Atoi(userData.TotalPoint)
 		count := userPoint + rewardData.Price
 
-		userData.Point = strconv.Itoa(count)
+		userData.TotalPoint = strconv.Itoa(count)
 	}
 
 	//update user
