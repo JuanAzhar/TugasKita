@@ -35,7 +35,6 @@ func (userUC *userUseCase) DeleteUser(id string) (err error) {
 	}
 
 	return nil
-
 }
 
 // Login implements entity.UserUseCaseInterface.
@@ -145,6 +144,26 @@ func (userUC *userUseCase) ChangePassword(id string, data entity.UserCore) error
 	err := userUC.userRepository.ChangePassword(id, data)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// AnnualResetPoint implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) AnnualResetPoint() error {
+	err := userUC.userRepository.AnnualResetPoint()
+	if err != nil {
+		return errors.New("error reset point")
+	}
+
+	return nil
+}
+
+// MonthlyResetPoint implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) MonthlyResetPoint() error {
+	err := userUC.userRepository.MonthlyResetPoint()
+	if err != nil {
+		return errors.New("error reset point")
 	}
 
 	return nil

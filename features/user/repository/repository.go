@@ -245,3 +245,21 @@ func (userRepo *userRepository) ChangePassword(id string, data entity.UserCore) 
 
 	return nil
 }
+
+// AnnualResetPoint implements entity.UserDataInterface.
+func (userRepo *userRepository) AnnualResetPoint() error {
+	err := userRepo.db.Exec("UPDATE users SET total_point = 0").Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// MonthlyResetPoint implements entity.UserDataInterface.
+func (userRepo *userRepository) MonthlyResetPoint() error {
+	err := userRepo.db.Exec("UPDATE users SET point = 0").Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

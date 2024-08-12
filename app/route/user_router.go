@@ -24,4 +24,7 @@ func UserRouter(db *gorm.DB, e *echo.Group) {
 	e.GET("/rank", userController.GetRankUser, m.JWTMiddleware())
 	e.PUT("/change-password", userController.ChangePassword, m.JWTMiddleware())
 	e.PUT("/:id", userController.UpdateSiswa, m.JWTMiddleware())
+
+	e.POST("/monthly-reset", userController.MonthlyResetPoint, m.JWTMiddleware())
+	e.POST("/annual-reset", userController.MonthlyResetPoint, m.JWTMiddleware())
 }

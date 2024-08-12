@@ -327,5 +327,56 @@ func (handler *UserController) ChangePassword(e echo.Context) error {
 	return e.JSON(http.StatusOK, map[string]interface{}{
 		"message": "password updated",
 	})
+}
 
+func (handler *UserController) AnnualResetPoint(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	errReset := handler.userUsecase.AnnualResetPoint()
+	if errReset != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "failed reset point",
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "total point reset successfull",
+	})
+}
+
+func (handler *UserController) MonthlyResetPoint(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	errReset := handler.userUsecase.MonthlyResetPoint()
+	if errReset != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "failed reset point",
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "point reset successfull",
+	})
 }

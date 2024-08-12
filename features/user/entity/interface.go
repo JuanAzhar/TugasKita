@@ -13,6 +13,9 @@ type UserDataInterface interface {
 
 	GetRankUser() ([]UserCore, error)
 	ChangePassword(id string, data UserCore) error
+
+	MonthlyResetPoint()(error)
+	AnnualResetPoint()(error)
 }
 
 type UserUseCaseInterface interface {
@@ -25,4 +28,7 @@ type UserUseCaseInterface interface {
 
 	GetRankUser() ([]UserCore, error)
 	ChangePassword(id string, data UserCore) error
+
+	MonthlyResetPoint()(error)
+	AnnualResetPoint()(error)
 }
