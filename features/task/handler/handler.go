@@ -948,3 +948,40 @@ func (handler *TaskController) UpdateReligionTask(e echo.Context) error {
 		"message": "task updated successfully",
 	})
 }
+
+func (handler *TaskController) FindAllReligionTaskUser(e echo.Context) error {
+	_, _, religion, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	data, err := handler.taskUsecase.FindAllReligionTaskUser(religion)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get all religion task",
+		})
+	}
+
+	dataList := []entity.ReligionTaskCore{}
+	for _, v := range data {
+		result := entity.ReligionTaskCore{
+			Id:          v.Id,
+			Title:       v.Title,
+			Point:       v.Point,
+			Description: v.Description,
+			Religion:    v.Description,
+			Start_date:  v.Start_date,
+			End_date:    v.End_date,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all user task request history",
+		"data":    dataList,
+	})
+}

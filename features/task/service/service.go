@@ -430,6 +430,11 @@ func (taskUC *taskService) UpdateTaskReligion(taskId string, data entity.Religio
 }
 
 // FindAllReligionTask implements entity.TaskUseCaseInterface.
-func (taskUC *taskService) FindAllReligionTask(religion string) ([]entity.ReligionTaskCore, error) {
-	panic("unimplemented")
+func (taskUC *taskService) FindAllReligionTaskUser(religion string) ([]entity.ReligionTaskCore, error) {
+	religionTask, err := taskUC.TaskRepo.FindAllReligionTaskUser(religion)
+	if err != nil {
+		return nil, errors.New("error get religion task")
+	}
+
+	return religionTask, nil
 }

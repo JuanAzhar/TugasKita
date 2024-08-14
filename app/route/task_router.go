@@ -29,6 +29,8 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	user.GET("/req-riwayat", taskController.FindAllRequestTaskHistory, m.JWTMiddleware())
 	user.GET("/sum-clear", taskController.CountUserClearTask, m.JWTMiddleware())
 
+	user.GET("/religion-task", taskController.FindAllReligionTaskUser, m.JWTMiddleware())
+
 	admin := e.Group("/admin-task")
 	admin.GET("/:id", taskController.ReadSpecificTask, m.JWTMiddleware())
 	admin.PUT("/:id", taskController.UpdateTask, m.JWTMiddleware())

@@ -599,6 +599,31 @@ func (taskRepo *TaskRepository) FindTaskByDateAndReligion(date string, religion 
 }
 
 // FindAllReligionTask implements entity.TaskDataInterface.
-func (taskRepo *TaskRepository) FindAllReligionTask(religion string) ([]entity.ReligionTaskCore, error) {
-	panic("unimplemented")
+func (taskRepo *TaskRepository) FindAllReligionTaskUser(religion string) ([]entity.ReligionTaskCore, error) {
+	var religionTask []model.ReligionTask
+
+	// Dapatkan tanggal hari ini
+	currentTime := time.Now().Format("2006-01-02")
+
+	// Query untuk mendapatkan data dengan end_date lebih besar atau sama dengan tanggal hari ini
+	errData := taskRepo.db.Where("religion = ? AND end_date >= ?", religion, currentTime).Find(&religionTask).Error
+	if errData != nil {
+		return nil, errData
+	}
+
+	mapData := make([]entity.ReligionTaskCore, len(religionTask))
+	for i, v := range religionTask {
+		mapData[i] = entity.ReligionTaskCore{
+			Id:          v.Id,
+			Title:       v.Title,
+			Description: v.Description,
+			Point:       v.Point,
+			Religion:    v.Religion,
+			Start_date:  v.Start_date,
+			End_date:    v.End_date,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+	}
+	return mapData, nil
 }
