@@ -18,4 +18,6 @@ func InitMigration(db *gorm.DB) {
 	db.AutoMigrate(&reward.Reward{})
 	db.AutoMigrate(&reward.UserRewardRequest{})
 	db.AutoMigrate(&penalty.Penalty{})
+	db.AutoMigrate(&task.ReligionTask{})
+	db.AutoMigrate(&task.UserReligionTaskUpload{})
 }

@@ -41,5 +41,11 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	admin.PUT("/user/request/:id", taskController.UpdateTaskReqStatus, m.JWTMiddleware())
 	admin.PUT("/user/:id", taskController.UpdateTaskStatus, m.JWTMiddleware())
 	admin.GET("/user/:id", taskController.FindUserTaskById, m.JWTMiddleware())
-	admin.GET("/user/request/:id", taskController.FindUserTaskReqyId, m.JWTMiddleware()) //belum tes
+	admin.GET("/user/request/:id", taskController.FindUserTaskReqyId, m.JWTMiddleware())
+
+	admin.GET("/religion/:id", taskController.ReadSpecificReligionTask, m.JWTMiddleware())
+	admin.PUT("/religion/:id", taskController.UpdateReligionTask, m.JWTMiddleware())
+	admin.GET("/religion", taskController.ReadAllReligionTask, m.JWTMiddleware())
+	admin.POST("/religion", taskController.AddReligionTask, m.JWTMiddleware())
+	admin.DELETE("/religion/:id", taskController.DeleteReligionTask, m.JWTMiddleware())
 }

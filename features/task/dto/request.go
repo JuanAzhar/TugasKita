@@ -28,3 +28,12 @@ type UserReqTaskRequest struct {
 	Status      string `json:"status" form:"status"`
 	Message     string `json:"message"`
 }
+
+type ReligionTaskRequest struct {
+	Title       string `json:"title"`
+	Religion    string `json:"religion"`
+	Point       int    `json:"point"`
+	Start_date  string `json:"start_date"`
+	End_date    string `json:"end_date"`
+	Description string `json:"description"`
+}

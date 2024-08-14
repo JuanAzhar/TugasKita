@@ -22,7 +22,7 @@ type Task struct {
 }
 
 type UserTaskUpload struct {
-	Id          uuid.UUID
+	Id          uuid.UUID `gorm:"type:varchar(50);primaryKey;not null" json:"id"`
 	TaskId      string
 	UserId      string
 	Image       string
@@ -35,7 +35,7 @@ type UserTaskUpload struct {
 }
 
 type UserTaskSubmission struct {
-	Id          uuid.UUID
+	Id          uuid.UUID `gorm:"type:varchar(50);primaryKey;not null" json:"id"`
 	Title       string
 	UserId      string
 	Image       string
@@ -43,6 +43,30 @@ type UserTaskSubmission struct {
 	Description string
 	Point       int
 	Status      string `gorm:"type:varchar(20);default:'Perlu Review'" json:"status"`
+	Message     string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+type ReligionTask struct {
+	Id          uuid.UUID `gorm:"type:varchar(50);primaryKey;not null" json:"id"`
+	Title       string
+	Description string
+	Religion    string
+	Point       int
+	Start_date  string
+	End_date    string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+type UserReligionTaskUpload struct {
+	Id          uuid.UUID `gorm:"type:varchar(50);primaryKey;not null" json:"id"`
+	TaskId      string
+	UserId      string
+	Image       string
+	Description string
+	Status      string `gorm:"type:varchar(20);default:'Review'" json:"status"`
 	Message     string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time

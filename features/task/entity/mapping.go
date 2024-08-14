@@ -128,3 +128,35 @@ func ListTaskUserReqModelToTaskUserReqCore(data []model.UserTaskSubmission) []Us
 	}
 	return dataTask
 }
+
+func ReligionTaskCoreToTaskModel(data ReligionTaskCore) model.ReligionTask {
+	return model.ReligionTask{
+		Id:          data.Id,
+		Title:       data.Title,
+		Description: data.Description,
+		Religion:    data.Religion,
+		Point:       data.Point,
+		Start_date:  data.Start_date,
+		End_date:    data.End_date,
+	}
+
+}
+
+func ReligionTaskModelToTaskCore(data model.ReligionTask) ReligionTaskCore {
+	return ReligionTaskCore{
+		Id:       data.Id,
+		Title:    data.Title,
+		Religion: data.Religion,
+		Point:    data.Point,
+	}
+
+}
+
+func ListReligionTaskModelToReligionTaskCore(data []model.ReligionTask) []ReligionTaskCore {
+	dataTask := []ReligionTaskCore{}
+	for _, v := range data {
+		result := ReligionTaskModelToTaskCore(v)
+		dataTask = append(dataTask, result)
+	}
+	return dataTask
+}

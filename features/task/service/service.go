@@ -288,3 +288,143 @@ func (taskUC *taskService) CountUserClearTask(id string) (int, error) {
 
 	return countTask, nil
 }
+
+// CreateTaskReligion implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) CreateTaskReligion(input entity.ReligionTaskCore) error {
+	layout := "2006-01-02"
+	currentTime := time.Now().Truncate(24 * time.Hour)
+	tomorrow := currentTime.Add(24 * time.Hour)
+
+	if input.Point < 0 {
+		return errors.New("point must be more than 0")
+	}
+
+	if input.Religion == "" {
+		return errors.New("religion can't empty")
+	}
+
+	// Kondisi khusus untuk agama Islam
+	if input.Religion == "Islam"  && input.Title == ""{
+		//cek apakah hari ini sudah upload atau belum
+		existingTasks, err := taskUC.TaskRepo.FindTaskByDateAndReligion(currentTime.Format(layout), "Islam")
+		if err != nil {
+			return err
+		}
+
+		if len(existingTasks) > 0 {
+			return errors.New("shalat 5 waktu sudah dibuat untuk hari ini")
+		}
+
+		//post shalat 5 waktu
+		prayers := []string{"Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"}
+		for _, prayer := range prayers {
+			task := entity.ReligionTaskCore{
+				Title:       prayer,
+				Point:       250,
+				Religion:    input.Religion,
+				Start_date:  currentTime.Format(layout),
+				End_date:    tomorrow.Format(layout),
+				Description: "Tugas Shalat " + prayer,
+			}
+			err := taskUC.TaskRepo.CreateTaskReligion(task)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+
+		if input.Religion == "" || input.Title == "" {
+			return errors.New("religion and title can't empty")
+		}
+
+		start, errStart := time.Parse(layout, input.Start_date)
+
+		if errStart != nil {
+			return errors.New("start date must be in 'yyyy-mm-dd' format")
+		}
+		if start.Before(currentTime) {
+			return errors.New("please choose at least today")
+		}
+
+		end, errEnd := time.Parse(layout, input.End_date)
+		if errEnd != nil {
+			return errors.New("end date must be in 'yyyy-mm-dd' format")
+		}
+
+		if end.Before(start) {
+			return errors.New("end date must be after start date")
+		}
+
+		if end.Equal(start) {
+			return errors.New("end date must be different from start date")
+		}
+
+		err := taskUC.TaskRepo.CreateTaskReligion(input)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// DeleteTaskReligion implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) DeleteTaskReligion(taskId string) error {
+	if taskId == "" {
+		return errors.New("insert task id")
+	}
+
+	_, err := taskUC.TaskRepo.FindByIdReligionTask(taskId)
+	if err != nil {
+		return errors.New("task not found")
+	}
+
+	errDelete := taskUC.TaskRepo.DeleteTaskReligion(taskId)
+	if errDelete != nil {
+		return errors.New("can't delete task")
+	}
+
+	return nil
+}
+
+// FindAllTaskReligion implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllTaskReligion() ([]entity.ReligionTaskCore, error) {
+	data, err := taskUC.TaskRepo.FindAllTaskReligion()
+	if err != nil {
+		return nil, errors.New("error get data")
+	}
+
+	return data, nil
+}
+
+// FindByIdReligionTask implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindByIdReligionTask(taskId string) (entity.ReligionTaskCore, error) {
+	if taskId == "" {
+		return entity.ReligionTaskCore{}, errors.New("task ID is required")
+	}
+
+	task, err := taskUC.TaskRepo.FindByIdReligionTask(taskId)
+	if err != nil {
+		return entity.ReligionTaskCore{}, err
+	}
+
+	return task, nil
+}
+
+// UpdateTaskReligion implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) UpdateTaskReligion(taskId string, data entity.ReligionTaskCore) error {
+	if data.Point < 0 {
+		return errors.New("point must be more than 0")
+	}
+
+	if data.Religion == "" || data.Title == "" {
+		return errors.New("religion and title can't empty")
+	}
+
+	err := taskUC.TaskRepo.UpdateTaskReligion(taskId, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

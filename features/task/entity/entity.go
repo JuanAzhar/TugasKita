@@ -7,46 +7,71 @@ import (
 )
 
 type TaskCore struct {
-	ID          uuid.UUID
-	AdminId     string
-	Title       string
-	Description string
-	Point       int
-	Message     string
-	Status      string
-	Type        string
-	Start_date  string
-	End_date    string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          uuid.UUID `json:"id"`
+	AdminId     string    `json:"admin_id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Point       int       `json:"point"`
+	Message     string    `json:"message"`
+	Status      string    `json:"status"`
+	Type        string    `json:"type"`
+	Start_date  string    `json:"start_date"`
+	End_date    string    `json:"end_date"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type UserTaskUploadCore struct {
-	Id          uuid.UUID
-	TaskId      string
-	TaskName    string
-	UserId      string
-	UserName    string
-	Image       string
-	Description string
-	Status      string
-	Type        string
-	Message     string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	Id          uuid.UUID `json:"id"`
+	TaskId      string    `json:"task_id"`
+	TaskName    string    `json:"task_name"`
+	UserId      string    `json:"user_id"`
+	UserName    string    `json:"user_name"`
+	Image       string    `json:"image"`
+	Description string    `json:"description"`
+	Status      string    `json:"status"`
+	Type        string    `json:"type"`
+	Message     string    `json:"message"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type UserTaskSubmissionCore struct {
-	Id          uuid.UUID
-	Title       string
-	UserId      string
-	UserName    string
-	Image       string
-	Type        string
-	Description string
-	Point       int
-	Status      string
-	Message     string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	Id          uuid.UUID `json:"id"`
+	Title       string    `json:"title"`
+	UserId      string    `json:"user_id"`
+	UserName    string    `json:"user_name"`
+	Image       string    `json:"image"`
+	Type        string    `json:"type"`
+	Description string    `json:"description"`
+	Point       int       `json:"point"`
+	Status      string    `json:"status"`
+	Message     string    `json:"message"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type ReligionTaskCore struct {
+	Id          uuid.UUID `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Religion    string    `json:"religion"`
+	Point       int       `json:"point"`
+	Start_date  string    `json:"start_date"`
+	End_date    string    `json:"end_date"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type UserReligionTaskUpload struct {
+	Id          uuid.UUID `json:"id"`
+	TaskId      string    `json:"task_id"`
+	UserId      string    `json:"user_id"`
+	UserName    string    `json:"username"`
+	Image       string    `json:"image"`
+	Description string    `json:"description"`
+	Status      string    `json:"status"`
+	Message     string    `json:"message"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }

@@ -45,3 +45,10 @@ type UserReqTaksResponse struct {
 	Status      string
 	Message     string
 }
+
+type ReligionTaskResponse struct {
+	Id       string
+	Title    string
+	Religion string
+	Point    int
+}

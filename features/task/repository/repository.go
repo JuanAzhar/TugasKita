@@ -505,3 +505,95 @@ func (taskRepo *TaskRepository) CountUserClearTask(id string) (int, error) {
 
 	return totalCount, nil
 }
+
+// CreateTaskReligion implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) CreateTaskReligion(input entity.ReligionTaskCore) error {
+	newUUID, UUIDerr := uuid.NewRandom()
+	if UUIDerr != nil {
+		return UUIDerr
+	}
+
+	data := entity.ReligionTaskCoreToTaskModel(input)
+	data.Id = newUUID
+	tx := taskRepo.db.Create(&data)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
+}
+
+// DeleteTaskReligion implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) DeleteTaskReligion(taskId string) error {
+	dataTask := model.ReligionTask{}
+
+	tx := taskRepo.db.Where("id = ? ", taskId).Delete(&dataTask)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return errors.New("task not found")
+	}
+
+	return nil
+}
+
+// FindAllTaskReligion implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindAllTaskReligion() ([]entity.ReligionTaskCore, error) {
+	var task []model.ReligionTask
+	taskRepo.db.Find(&task)
+
+	dataTask := entity.ListReligionTaskModelToReligionTaskCore(task)
+	return dataTask, nil
+}
+
+// FindByIdReligion implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindByIdReligionTask(taskId string) (entity.ReligionTaskCore, error) {
+	dataTask := model.ReligionTask{}
+
+	tx := taskRepo.db.Where("id = ? ", taskId).First(&dataTask)
+	if tx.Error != nil {
+		return entity.ReligionTaskCore{}, tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return entity.ReligionTaskCore{}, errors.New("task not found")
+	}
+
+	dataResponse := entity.ReligionTaskModelToTaskCore(dataTask)
+	return dataResponse, nil
+}
+
+// UpdateTaskReligion implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) UpdateTaskReligion(taskId string, data entity.ReligionTaskCore) error {
+	dataTask := entity.ReligionTaskCoreToTaskModel(data)
+
+	tx := taskRepo.db.Where("id = ?", taskId).Updates(&dataTask)
+	if tx.Error != nil {
+		if tx.Error != nil {
+			return tx.Error
+		}
+		return tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return errors.New("task not found")
+	}
+
+	return nil
+}
+
+// FindTaskByDateAndReligion implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindTaskByDateAndReligion(date string, religion string) ([]entity.ReligionTaskCore, error) {
+	var tasks []model.ReligionTask
+	err := taskRepo.db.Where("start_date = ? AND religion = ?", date, religion).Find(&tasks).Error
+	if err != nil {
+		return nil, err
+	}
+
+	var taskCores []entity.ReligionTaskCore
+	for _, task := range tasks {
+		taskCores = append(taskCores, entity.ReligionTaskModelToTaskCore(task))
+	}
+	return taskCores, nil
+}

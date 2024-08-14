@@ -1,6 +1,8 @@
 package entity
 
-import "mime/multipart"
+import (
+	"mime/multipart"
+)
 
 type TaskDataInterface interface {
 	CreateTask(input TaskCore) error
@@ -23,6 +25,13 @@ type TaskDataInterface interface {
 	FindTasksNotClaimedByUser(userId string) ([]TaskCore, error)
 
 	CountUserClearTask(id string)(int, error)
+
+	CreateTaskReligion(input ReligionTaskCore) error
+	FindAllTaskReligion() ([]ReligionTaskCore, error)
+	FindByIdReligionTask(taskId string) (ReligionTaskCore, error)
+	UpdateTaskReligion(taskId string, data ReligionTaskCore) error
+	DeleteTaskReligion(taskId string) error
+	FindTaskByDateAndReligion(date string, religion string)([]ReligionTaskCore, error)
 }
 
 type TaskUseCaseInterface interface {
@@ -46,4 +55,10 @@ type TaskUseCaseInterface interface {
 	FindTasksNotClaimedByUser(userId string) ([]TaskCore, error)
 
 	CountUserClearTask(id string)(int, error)
+
+	CreateTaskReligion(input ReligionTaskCore) error
+	FindAllTaskReligion() ([]ReligionTaskCore, error)
+	FindByIdReligionTask(taskId string) (ReligionTaskCore, error)
+	UpdateTaskReligion(taskId string, data ReligionTaskCore) error
+	DeleteTaskReligion(taskId string) error
 }

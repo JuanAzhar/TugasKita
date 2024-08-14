@@ -17,7 +17,7 @@ type Reward struct {
 }
 
 type UserRewardRequest struct {
-	Id         uuid.UUID
+	Id         uuid.UUID `gorm:"type:varchar(50);primaryKey;not null" json:"id"`
 	RewardId   string
 	Price      int
 	Amount     int

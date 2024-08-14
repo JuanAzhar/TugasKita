@@ -738,3 +738,213 @@ func (handler *TaskController) CountUserClearTask(e echo.Context) error {
 		"count":   count,
 	})
 }
+
+func (handler *TaskController) AddReligionTask(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	input := new(dto.ReligionTaskRequest)
+	errBind := e.Bind(&input)
+	if errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error bind data",
+		})
+	}
+
+	data := entity.ReligionTaskCore{
+		Title:       input.Title,
+		Point:       input.Point,
+		Religion:    input.Religion,
+		Start_date:  input.Start_date,
+		End_date:    input.End_date,
+		Description: input.Description,
+	}
+
+	errTask := handler.taskUsecase.CreateTaskReligion(data)
+	if errTask != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error create task",
+			"error":   errTask.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "succes create task",
+	})
+}
+
+func (handler *TaskController) ReadAllReligionTask(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role == "admin" {
+		data, err := handler.taskUsecase.FindAllTaskReligion()
+		if err != nil {
+			return e.JSON(http.StatusBadRequest, map[string]any{
+				"message": "error get all task",
+			})
+		}
+
+		dataList := []dto.ReligionTaskResponse{}
+		for _, v := range data {
+			result := dto.ReligionTaskResponse{
+				Id:       v.Id.String(),
+				Title:    v.Title,
+				Point:    v.Point,
+				Religion: v.Religion,
+			}
+			dataList = append(dataList, result)
+		}
+
+		return e.JSON(http.StatusOK, map[string]any{
+			"message": "get all admin task",
+			"data":    dataList,
+		})
+
+	} else if role == "user" {
+		// data, err := handler.taskUsecase.FindTasksNotClaimedByUser(userId)
+		// if err != nil {
+		// 	return e.JSON(http.StatusBadRequest, map[string]any{
+		// 		"message": "error get all task",
+		// 	})
+		// }
+
+		// dataList := []dto.TaskResponse{}
+		// for _, v := range data {
+		// 	result := dto.TaskResponse{
+		// 		Id:         v.ID.String(),
+		// 		Title:      v.Title,
+		// 		Point:      v.Point,
+		// 		Status:     v.Status,
+		// 		Type:       v.Type,
+		// 		Start_date: v.Start_date,
+		// 		End_date:   v.End_date,
+		// 	}
+		// 	dataList = append(dataList, result)
+		// }
+
+		return e.JSON(http.StatusOK, map[string]any{
+			"message": "get all user task",
+			// "data":    dataList,
+		})
+	}
+
+	return e.JSON(http.StatusBadRequest, map[string]any{
+		"message": "access denied",
+	})
+}
+
+func (handler *TaskController) ReadSpecificReligionTask(e echo.Context) error {
+
+	idParamstr := e.Param("id")
+
+	idParams, err := uuid.Parse(idParamstr)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "task not found",
+		})
+	}
+
+	data, err := handler.taskUsecase.FindByIdReligionTask(idParams.String())
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get specific task",
+		})
+	}
+
+	response := dto.ReligionTaskResponse{
+		Id:       data.Id.String(),
+		Title:    data.Title,
+		Religion: data.Religion,
+		Point:    data.Point,
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get task",
+		"data":    response,
+	})
+}
+
+func (handler *TaskController) DeleteReligionTask(e echo.Context) error {
+	_, role, errRole := middleware.ExtractTokenUserId(e)
+	if errRole != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": errRole.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	idParams := e.Param("id")
+	err := handler.taskUsecase.DeleteTaskReligion(idParams)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error deleting task",
+			"error":   err.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Task deleted successfully",
+	})
+}
+
+func (handler *TaskController) UpdateReligionTask(e echo.Context) error {
+	_, role, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	idParams := e.Param("id")
+
+	data := new(dto.ReligionTaskRequest)
+	if errBind := e.Bind(data); errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error binding data",
+		})
+	}
+
+	taskData := entity.ReligionTaskCore{
+		Title:    data.Title,
+		Religion: data.Religion,
+		Point:    data.Point,
+	}
+
+	errUpdate := handler.taskUsecase.UpdateTaskReligion(idParams, taskData)
+	if errUpdate != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error updating task",
+			"error":   errUpdate.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "task updated successfully",
+	})
+}
