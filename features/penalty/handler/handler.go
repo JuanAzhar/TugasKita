@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"tugaskita/features/penalty/dto"
 	"tugaskita/features/penalty/entity"
+	user "tugaskita/features/user/entity"
 	middleware "tugaskita/utils/jwt"
 
 	"github.com/google/uuid"
@@ -12,11 +13,13 @@ import (
 
 type PenaltyController struct {
 	penaltyUsecase entity.PenaltyUseCaseInterface
+	userUsecase    user.UserUseCaseInterface
 }
 
-func New(penaltyUC entity.PenaltyUseCaseInterface) *PenaltyController {
+func New(penaltyUC entity.PenaltyUseCaseInterface, userUC user.UserUseCaseInterface) *PenaltyController {
 	return &PenaltyController{
 		penaltyUsecase: penaltyUC,
+		userUsecase:    userUC,
 	}
 }
 
@@ -112,10 +115,14 @@ func (handler *PenaltyController) FindAllPenalty(e echo.Context) error {
 
 	dataList := []entity.PenaltyCore{}
 	for _, v := range data {
+
+		userData, _ := handler.userUsecase.ReadSpecificUser(v.UserId)
+
 		result := entity.PenaltyCore{
 			Id:          v.Id,
 			UserId:      v.UserId,
 			Description: v.Description,
+			UserName: userData.Name,
 			Point:       v.Point,
 			Date:        v.Date,
 			CreatedAt:   v.CreatedAt,
@@ -136,7 +143,7 @@ func (handler *PenaltyController) FindSpecificPenalty(e echo.Context) error {
 	idParams, err := uuid.Parse(idParamstr)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": "reward not found",
+			"message": "penalty data not found",
 		})
 	}
 
@@ -147,9 +154,17 @@ func (handler *PenaltyController) FindSpecificPenalty(e echo.Context) error {
 		})
 	}
 
+	userData, errData := handler.userUsecase.ReadSpecificUser(data.UserId)
+	if errData != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get specific user",
+		})
+	}
+
 	response := entity.PenaltyCore{
 		Id:          data.Id,
 		UserId:      data.UserId,
+		UserName:    userData.Name,
 		Description: data.Description,
 		Point:       data.Point,
 		Date:        data.Date,
@@ -202,7 +217,7 @@ func (handler *PenaltyController) UpdatePenalty(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusOK, map[string]interface{}{
-		"message": "reward penalty successfully",
+		"message": "penalty updated successfully",
 	})
 }
 
@@ -223,9 +238,13 @@ func (handler *PenaltyController) FindAllPenaltyHistory(e echo.Context) error {
 
 	dataList := []entity.PenaltyCore{}
 	for _, v := range data {
+
+		userData, _ := handler.userUsecase.ReadSpecificUser(v.UserId)
+
 		result := entity.PenaltyCore{
 			Id:          v.Id,
 			UserId:      v.UserId,
+			UserName:    userData.Name,
 			Description: v.Description,
 			Point:       v.Point,
 			Date:        v.Date,

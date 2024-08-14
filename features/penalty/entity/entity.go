@@ -7,11 +7,12 @@ import (
 )
 
 type PenaltyCore struct {
-	Id          uuid.UUID
-	UserId      string
-	Point       int
-	Description string
-	Date        string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	Id          uuid.UUID `json:"id"`
+	UserId      string    `json:"user_id"`
+	UserName    string    `json:"user_name"`
+	Point       int       `json:"point"`
+	Description string    `json:"description"`
+	Date        string    `json:"date"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }

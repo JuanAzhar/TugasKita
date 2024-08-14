@@ -370,6 +370,8 @@ func (taskRepo *TaskRepository) FindUserTaskById(id string) (entity.UserTaskUplo
 		TaskName:    taskData.Title,
 		UserId:      data.UserId,
 		UserName:    userData.Name,
+		Type:        data.Type,
+		Message:     data.Message,
 		Image:       data.Image,
 		Description: data.Description,
 		Status:      data.Status,

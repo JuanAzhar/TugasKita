@@ -207,6 +207,7 @@ func (rewardRepo *RewardRepository) FindUserRewardById(id string) (entity.UserRe
 		UserId:     data.UserId,
 		Status:     data.Status,
 		Amount:     data.Amount,
+		Price:      data.Price,
 		TotalPrice: data.TotalPrice,
 		CreatedAt:  data.CreatedAt,
 		UpdatedAt:  data.UpdatedAt,

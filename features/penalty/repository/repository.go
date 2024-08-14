@@ -53,11 +53,26 @@ func (penaltyRepo *PenaltyRepository) DeletePenalty(id string) error {
 
 // FindAllPenalty implements entity.PenaltyDataInterface.
 func (penaltyRepo *PenaltyRepository) FindAllPenalty() ([]entity.PenaltyCore, error) {
-	var penalty []model.Penalty
-	penaltyRepo.db.Find(&penalty)
+	var dataPenalty []model.Penalty
 
-	dataPenalty := entity.ListPenaltyModelToListPenaltyCore(penalty)
-	return dataPenalty, nil
+	errData := penaltyRepo.db.Find(&dataPenalty).Error
+	if errData != nil {
+		return nil, errData
+	}
+
+	dataResponse := make([]entity.PenaltyCore, len(dataPenalty))
+	for i, v := range dataPenalty {
+		dataResponse[i] = entity.PenaltyCore{
+			Id:          v.Id,
+			UserId:      v.UserId,
+			Point:       v.Point,
+			Description: v.Description,
+			Date:        v.Date,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+	}
+	return dataResponse, nil
 }
 
 // FindSpecificPenalty implements entity.PenaltyDataInterface.
