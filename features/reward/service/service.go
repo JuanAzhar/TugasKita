@@ -141,17 +141,21 @@ func (rewardUC *RewardService) UploadRewardRequest(input entity.UserRewardReques
 		return errors.New("failed get reward")
 	}
 
-	if userPoint < rewardData.Price {
-		return errors.New("not enough point")
-	}
-
 	if rewardData.Stock < 1 {
 		return errors.New("not enough stock")
 	}
 
-	count := userPoint - rewardData.Price
+	totalPrice := rewardData.Price * input.Amount
+
+	count := userPoint - totalPrice
 
 	userData.TotalPoint = strconv.Itoa(count)
+	input.TotalPrice = totalPrice
+	input.Price = rewardData.Price
+
+	if userPoint < totalPrice {
+		return errors.New("not enough point")
+	}
 
 	//update user
 	errUserUpdate := rewardUC.UserRepo.UpdatePoint(input.UserId, userData)
@@ -201,14 +205,17 @@ func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entit
 		return errors.New("you already accept this request")
 	}
 
+	if rewardReqData.Status == "Ditolak" {
+		return errors.New("you already reject this request")
+	}
+
 	if rewardData.Stock < 1 {
 		return errors.New("not enough stock")
 	}
 
 	if data.Status == "Ditolak" {
 		userPoint, _ := strconv.Atoi(userData.TotalPoint)
-		count := userPoint + rewardData.Price
-
+		count := userPoint + rewardReqData.TotalPrice
 		userData.TotalPoint = strconv.Itoa(count)
 	}
 
@@ -216,6 +223,22 @@ func (rewardUC *RewardService) UpdateReqRewardStatus(rewardId string, data entit
 	errUserUpdate := rewardUC.UserRepo.UpdatePoint(data.UserId, userData)
 	if errUserUpdate != nil {
 		return errors.New("failed update user point")
+	}
+
+	//save history
+	if data.Status == "Diterima" {
+		//update history
+		amount := strconv.Itoa(rewardReqData.Amount)
+		historyData := user.UserPointCore{
+			UserId:   data.UserId,
+			Type:     "Reward",
+			Point:    rewardReqData.TotalPrice,
+			TaskName: "Change " + amount + " " + rewardReqData.RewardName,
+		}
+		errUserHistory := rewardUC.UserRepo.PostUserPointHistory(historyData)
+		if errUserHistory != nil {
+			return errors.New("failed add user history point")
+		}
 	}
 
 	//update status

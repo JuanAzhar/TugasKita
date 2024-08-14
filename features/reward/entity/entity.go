@@ -21,9 +21,11 @@ type UserRewardRequestCore struct {
 	RewardId   string
 	RewardName string
 	Price      int
+	TotalPrice int
 	UserId     string
 	UserName   string
 	Status     string
+	Amount     int
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

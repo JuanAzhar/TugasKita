@@ -139,13 +139,15 @@ func (rewardRepo *RewardRepository) FindAllUploadReward() ([]entity.UserRewardRe
 	mapData := make([]entity.UserRewardRequestCore, len(reward))
 	for i, v := range reward {
 		mapData[i] = entity.UserRewardRequestCore{
-			Id:        v.Id,
-			RewardId:  v.RewardId,
-			Price:     v.Price,
-			UserId:    v.UserId,
-			Status:    v.Status,
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
+			Id:         v.Id,
+			RewardId:   v.RewardId,
+			Price:      v.Price,
+			TotalPrice: v.TotalPrice,
+			Amount:     v.Amount,
+			UserId:     v.UserId,
+			Status:     v.Status,
+			CreatedAt:  v.CreatedAt,
+			UpdatedAt:  v.UpdatedAt,
 		}
 	}
 	return mapData, nil
@@ -159,10 +161,13 @@ func (rewardRepo *RewardRepository) UploadRewardRequest(input entity.UserRewardR
 	}
 
 	var inputData = model.UserRewardRequest{
-		Id:       newUUID,
-		RewardId: input.RewardId,
-		UserId:   input.UserId,
-		Status:   input.Status,
+		Id:         newUUID,
+		RewardId:   input.RewardId,
+		UserId:     input.UserId,
+		Status:     input.Status,
+		Amount:     input.Amount,
+		TotalPrice: input.TotalPrice,
+		Price:      input.Price,
 	}
 
 	errUpload := rewardRepo.db.Save(&inputData)
@@ -201,6 +206,8 @@ func (rewardRepo *RewardRepository) FindUserRewardById(id string) (entity.UserRe
 		UserName:   userData.Name,
 		UserId:     data.UserId,
 		Status:     data.Status,
+		Amount:     data.Amount,
+		TotalPrice: data.TotalPrice,
 		CreatedAt:  data.CreatedAt,
 		UpdatedAt:  data.UpdatedAt,
 	}

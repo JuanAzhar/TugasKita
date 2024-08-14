@@ -11,6 +11,7 @@ import (
 
 func InitMigration(db *gorm.DB) {
 	db.AutoMigrate(&users.Users{})
+	db.AutoMigrate(&users.UserPoint{})
 	db.AutoMigrate(&task.Task{})
 	db.AutoMigrate(&task.UserTaskUpload{})
 	db.AutoMigrate(&task.UserTaskSubmission{})

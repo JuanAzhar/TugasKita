@@ -129,9 +129,10 @@ func (taskRepo *TaskRepository) UpdateTaskStatus(taskId string, data entity.User
 	}
 
 	if taskData.Status == "Diterima" {
+		//update user
 		userPoint, _ := strconv.Atoi(userData.Point)
 		userTotalPoint, _ := strconv.Atoi(userData.TotalPoint)
-		
+
 		count := userPoint + pointTask.Point
 		countTotal := userTotalPoint + pointTask.Point
 
@@ -143,6 +144,18 @@ func (taskRepo *TaskRepository) UpdateTaskStatus(taskId string, data entity.User
 		updateUser := taskRepo.userRepository.UpdatePoint(data.UserId, saveUser)
 		if updateUser != nil {
 			return updateUser
+		}
+
+		//update history
+		historyData := user.UserPointCore{
+			UserId:   data.UserId,
+			Type:     "Task",
+			Point:    pointTask.Point,
+			TaskName: pointTask.Title,
+		}
+		errUserHistory := taskRepo.userRepository.PostUserPointHistory(historyData)
+		if errUserHistory != nil {
+			return errors.New("failed add user history point")
 		}
 	}
 
@@ -176,7 +189,7 @@ func (taskRepo *TaskRepository) UpdateTaskReqStatus(id string, data entity.UserT
 	if taskData.Status == "Diterima" {
 		userPoint, _ := strconv.Atoi(userData.Point)
 		userTotalPoint, _ := strconv.Atoi(userData.TotalPoint)
-		
+
 		count := userPoint + pointTask.Point
 		countTotal := userTotalPoint + pointTask.Point
 
@@ -188,6 +201,18 @@ func (taskRepo *TaskRepository) UpdateTaskReqStatus(id string, data entity.UserT
 		updateUser := taskRepo.userRepository.UpdatePoint(data.UserId, saveUser)
 		if updateUser != nil {
 			return updateUser
+		}
+
+		//update history
+		historyData := user.UserPointCore{
+			UserId:   data.UserId,
+			Type:     "Submission",
+			Point:    pointTask.Point,
+			TaskName: pointTask.Title,
+		}
+		errUserHistory := taskRepo.userRepository.PostUserPointHistory(historyData)
+		if errUserHistory != nil {
+			return errors.New("failed add user history point")
 		}
 	}
 

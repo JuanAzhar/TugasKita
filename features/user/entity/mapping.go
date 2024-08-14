@@ -25,3 +25,36 @@ func UserModelToUserCore(data model.Users) UserCore {
 		TotalPoint: data.TotalPoint,
 	}
 }
+
+func UserPointCoreToUserPointModel(data UserPointCore) model.UserPoint {
+	return model.UserPoint{
+		Id:        data.Id,
+		UserId:    data.UserId,
+		Type:      data.Type,
+		TaskName:  data.TaskName,
+		Point:     data.Point,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
+	}
+}
+
+func UserPointModelToUserPointCore(data model.UserPoint) UserPointCore {
+	return UserPointCore{
+		Id:        data.Id,
+		UserId:    data.UserId,
+		Type:      data.Type,
+		TaskName:  data.TaskName,
+		Point:     data.Point,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
+	}
+}
+
+func ListUserPointModelToListUserPointCore(data []model.UserPoint) []UserPointCore{
+	dataUser := []UserPointCore{}
+	for _, v := range data {
+		result := UserPointModelToUserPointCore(v)
+		dataUser = append(dataUser, result)
+	}
+	return dataUser
+}

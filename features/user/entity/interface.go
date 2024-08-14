@@ -16,6 +16,11 @@ type UserDataInterface interface {
 
 	MonthlyResetPoint()(error)
 	AnnualResetPoint()(error)
+
+	PostUserPointHistory(data UserPointCore) error
+	GetAllUserPointHistory()([]UserPointCore, error)
+	GetSpecificUserPointHistory(id string)(UserPointCore, error)
+	GetUserPointHistory(id string)([]UserPointCore, error)
 }
 
 type UserUseCaseInterface interface {
@@ -31,4 +36,9 @@ type UserUseCaseInterface interface {
 
 	MonthlyResetPoint()(error)
 	AnnualResetPoint()(error)
+	
+	PostUserPointHistory(data UserPointCore) error
+	GetAllUserPointHistory()([]UserPointCore, error)
+	GetSpecificUserPointHistory(id string)(UserPointCore, error)
+	GetUserPointHistory(id string)([]UserPointCore, error)
 }

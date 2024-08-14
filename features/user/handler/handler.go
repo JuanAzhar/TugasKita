@@ -380,3 +380,134 @@ func (handler *UserController) MonthlyResetPoint(e echo.Context) error {
 		"message": "point reset successfull",
 	})
 }
+
+func (handler *UserController) GetAllUserPointHistory(e echo.Context) error {
+	_, role, errRole := middleware.ExtractTokenUserId(e)
+	if errRole != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": errRole.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+	
+	data, err := handler.userUsecase.GetAllUserPointHistory()
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get all user point history",
+		})
+	}
+
+	dataList := []entity.UserPointCore{}
+	for _, v := range data {
+		result := entity.UserPointCore{
+			Id:        v.Id,
+			UserId:    v.UserId,
+			Type:      v.Type,
+			TaskName:  v.TaskName,
+			Point:     v.Point,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all user point history",
+		"data":    dataList,
+	})
+}
+
+func (handler *UserController) GetSpecificUserPointHistory(e echo.Context) error {
+	idParamstr := e.Param("id")
+
+	idParams, err := uuid.Parse(idParamstr)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "history not found",
+		})
+	}
+
+	data, err := handler.userUsecase.GetSpecificUserPointHistory(idParams.String())
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get specific history",
+		})
+	}
+
+	response := entity.UserPointCore{
+		Id:        data.Id,
+		UserId:    data.UserId,
+		Type:      data.Type,
+		TaskName:  data.TaskName,
+		Point:     data.Point,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get history",
+		"data":    response,
+	})
+}
+
+func (handler *UserController) GetUserPointHistory(e echo.Context) error {
+	userId, _, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	data, err := handler.userUsecase.GetUserPointHistory(userId)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get history point",
+		})
+	}
+
+	dataList := []entity.UserPointCore{}
+	for _, v := range data {
+		result := entity.UserPointCore{
+			Id:        v.Id,
+			UserId:    v.UserId,
+			Type:      v.Type,
+			TaskName:  v.TaskName,
+			Point:     v.Point,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all point history",
+		"data":    dataList,
+	})
+}
+
+func (handler *UserController) PostUserPointHistory(e echo.Context) error {
+	input := entity.UserPointCore{}
+	errBind := e.Bind(&input)
+	if errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error bind data",
+		})
+	}
+
+	errTask := handler.userUsecase.PostUserPointHistory(input)
+	if errTask != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error create history",
+			"error":   errTask.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "succes create history",
+	})
+}

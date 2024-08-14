@@ -9,6 +9,7 @@ type RewardRequest struct {
 
 type RewardReqRequest struct {
 	RewardId string `json:"reward_id"`
+	Amount   int    `json:"amount"`
 }
 
 type RewardReqUpdateRequest struct {

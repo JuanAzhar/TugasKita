@@ -208,7 +208,7 @@ func (userRepo *userRepository) UpdatePoint(id string, data entity.UserCore) err
 func (userRepo *userRepository) GetRankUser() ([]entity.UserCore, error) {
 	var dataUser []model.Users
 
-	errData := userRepo.db.Order("point desc").Find(&dataUser).Error
+	errData := userRepo.db.Where("role = ?", "user").Order("point desc").Find(&dataUser).Error
 	if errData != nil {
 		return nil, errData
 	}
@@ -261,5 +261,55 @@ func (userRepo *userRepository) MonthlyResetPoint() error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+// GetAllUserPointHistory implements entity.UserDataInterface.
+func (userRepo *userRepository) GetAllUserPointHistory() ([]entity.UserPointCore, error) {
+	var userPoint []model.UserPoint
+	userRepo.db.Find(&userPoint)
+
+	dataUser := entity.ListUserPointModelToListUserPointCore(userPoint)
+	return dataUser, nil
+}
+
+// GetSpecificUserPointHistory implements entity.UserDataInterface.
+func (userRepo *userRepository) GetSpecificUserPointHistory(id string) (entity.UserPointCore, error) {
+	dataUser := model.UserPoint{}
+
+	tx := userRepo.db.Where("id = ? ", id).First(&dataUser)
+	if tx.Error != nil {
+		return entity.UserPointCore{}, tx.Error
+	}
+
+	dataResponse := entity.UserPointModelToUserPointCore(dataUser)
+	return dataResponse, nil
+}
+
+// GetUserPointHistory implements entity.UserDataInterface.
+func (userRepo *userRepository) GetUserPointHistory(id string) ([]entity.UserPointCore, error) {
+	var userPoint []model.UserPoint
+	userRepo.db.Where("user_id=?", id).Find(&userPoint)
+
+	datauserPoint := entity.ListUserPointModelToListUserPointCore(userPoint)
+	return datauserPoint, nil
+}
+
+// PostUserPointHistory implements entity.UserDataInterface.
+func (userRepo *userRepository) PostUserPointHistory(data entity.UserPointCore) error {
+	println("masuk kesini")
+	newUUID, UUIDerr := uuid.NewRandom()
+	if UUIDerr != nil {
+		return UUIDerr
+	}
+
+	data.Id = newUUID.String()
+	dataUser := entity.UserPointCoreToUserPointModel(data)
+	
+	tx := userRepo.db.Create(&dataUser)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
 	return nil
 }

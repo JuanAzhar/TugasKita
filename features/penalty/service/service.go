@@ -47,18 +47,38 @@ func (penaltyUC *PenaltyService) CreatePenalty(input entity.PenaltyCore) error {
 		return errors.New("failed get user")
 	}
 
+	//reduce total point
+	userTotalPoint, _ := strconv.Atoi(userData.TotalPoint)
+
+	countTotal := userTotalPoint - input.Point
+
+	userData.TotalPoint = strconv.Itoa(countTotal)
+
+	//reduce point
 	userPoint, _ := strconv.Atoi(userData.Point)
 
 	count := userPoint - input.Point
 
 	userData.Point = strconv.Itoa(count)
-
 	//update user
 	errUserUpdate := penaltyUC.UserRepo.UpdatePoint(input.UserId, userData)
 	if errUserUpdate != nil {
 		return errors.New("failed update user point")
 	}
 
+	//update history
+	historyData := user.UserPointCore{
+		UserId:   input.UserId,
+		Type:     "Penalty",
+		Point:    input.Point,
+		TaskName: input.Description,
+	}
+	errUserHistory := penaltyUC.UserRepo.PostUserPointHistory(historyData)
+	if errUserHistory != nil {
+		return errors.New("failed add user history point")
+	}
+
+	//create penalty
 	err := penaltyUC.PenaltyRepo.CreatePenalty(input)
 	if err != nil {
 		return err

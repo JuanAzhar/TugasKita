@@ -39,12 +39,15 @@ func ListRewardModelToRewardCore(data []model.Reward) []RewardCore {
 
 func RewardUserModelToRewardUserCore(data model.UserRewardRequest) UserRewardRequestCore {
 	return UserRewardRequestCore{
-		Id:        data.Id,
-		RewardId:  data.RewardId,
-		UserId:    data.UserId,
-		Status:    data.Status,
-		CreatedAt: data.CreatedAt,
-		UpdatedAt: data.UpdatedAt,
+		Id:         data.Id,
+		RewardId:   data.RewardId,
+		UserId:     data.UserId,
+		Price:      data.Price,
+		Amount:     data.Amount,
+		TotalPrice: data.TotalPrice,
+		Status:     data.Status,
+		CreatedAt:  data.CreatedAt,
+		UpdatedAt:  data.UpdatedAt,
 	}
 }
 

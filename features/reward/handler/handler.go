@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"tugaskita/features/reward/dto"
 	"tugaskita/features/reward/entity"
 	user "tugaskita/features/user/entity"
@@ -248,6 +249,8 @@ func (handler *RewardController) FindAllRewardHistory(e echo.Context) error {
 			Price:      rewardData.Price,
 			UserId:     v.UserId,
 			Status:     v.Status,
+			TotalPrice: v.TotalPrice,
+			Amount:     v.Amount,
 			CreatedAt:  v.CreatedAt,
 			UpdatedAt:  v.UpdatedAt,
 		}
@@ -293,6 +296,8 @@ func (handler *RewardController) FindAllUploadReward(e echo.Context) error {
 			RewardName: rewardData.Name,
 			Price:      rewardData.Price,
 			UserId:     v.UserId,
+			Amount:     v.Amount,
+			TotalPrice: v.TotalPrice,
 			UserName:   userData.Name,
 			Status:     v.Status,
 			CreatedAt:  v.CreatedAt,
@@ -326,6 +331,7 @@ func (handler *RewardController) UploadRewardRequest(e echo.Context) error {
 	dataInput := entity.UserRewardRequestCore{
 		RewardId: input.RewardId,
 		UserId:   userId,
+		Amount:   input.Amount,
 	}
 
 	err := handler.rewardUsecase.UploadRewardRequest(dataInput)
@@ -336,9 +342,12 @@ func (handler *RewardController) UploadRewardRequest(e echo.Context) error {
 		})
 	}
 
+	amount := strconv.Itoa(input.Amount)
+
 	dataRespon := dto.RewardRequestResponse{
 		RewardId: input.RewardId,
 		UserId:   userId,
+		Amount:   amount,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
@@ -370,12 +379,18 @@ func (handler *RewardController) FindUserRewardById(e echo.Context) error {
 		})
 	}
 
-	response := dto.RewardRequestResponse{
-		Id:         data.Id.String(),
-		UserId:     data.UserId,
-		UserName:   data.UserName,
+	userData, _ := handler.userUsecase.ReadSpecificUser(data.UserId)
+	rewardData, _ := handler.rewardUsecase.FindById(data.RewardId)
+
+	response := entity.UserRewardRequestCore{
+		Id:         data.Id,
 		RewardId:   data.RewardId,
-		RewardName: data.RewardName,
+		RewardName: rewardData.Name,
+		Price:      data.Price,
+		UserId:     data.UserId,
+		UserName:   userData.Name,
+		Amount:     data.Amount,
+		TotalPrice: data.TotalPrice,
 		Status:     data.Status,
 		CreatedAt:  data.CreatedAt,
 		UpdatedAt:  data.UpdatedAt,

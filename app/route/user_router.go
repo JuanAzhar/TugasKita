@@ -27,4 +27,8 @@ func UserRouter(db *gorm.DB, e *echo.Group) {
 
 	e.POST("/monthly-reset", userController.MonthlyResetPoint, m.JWTMiddleware())
 	e.POST("/annual-reset", userController.MonthlyResetPoint, m.JWTMiddleware())
+
+	e.GET("/user-point-history", userController.GetAllUserPointHistory, m.JWTMiddleware())
+	e.GET("/user-point-history/:id", userController.GetSpecificUserPointHistory, m.JWTMiddleware())
+	e.GET("/point-history",userController.GetUserPointHistory, m.JWTMiddleware())
 }

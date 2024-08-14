@@ -168,3 +168,46 @@ func (userUC *userUseCase) MonthlyResetPoint() error {
 
 	return nil
 }
+
+// GetAllUserPointHistory implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) GetAllUserPointHistory() ([]entity.UserPointCore, error) {
+	data, err := userUC.userRepository.GetAllUserPointHistory()
+	if err != nil {
+		return nil, errors.New("error get data")
+	}
+
+	return data, nil
+}
+
+// GetSpecificUserPointHistory implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) GetSpecificUserPointHistory(id string) (entity.UserPointCore, error) {
+	if id == "" {
+		return entity.UserPointCore{}, errors.New("id is required")
+	}
+
+	userPoint, err := userUC.userRepository.GetSpecificUserPointHistory(id)
+	if err != nil {
+		return entity.UserPointCore{}, err
+	}
+
+	return userPoint, nil
+}
+
+// GetUserPointHistory implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) GetUserPointHistory(id string) ([]entity.UserPointCore, error) {
+	data, err := userUC.userRepository.GetUserPointHistory(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// PostUserPointHistory implements entity.UserUseCaseInterface.
+func (userUC *userUseCase) PostUserPointHistory(data entity.UserPointCore) error {
+	err := userUC.userRepository.PostUserPointHistory(data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
