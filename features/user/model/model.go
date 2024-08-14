@@ -11,6 +11,7 @@ type Users struct {
 	Email      string    `gorm:"varchar(50);not null" json:"email"`
 	Password   string    `gorm:"varchar(50);not null" json:"password"`
 	Role       string    `gorm:"Varchar(25);not null" json:"role"`
+	Religion   string    `gorm:"Varchar(25)" json:"religion"`
 	Point      string    `gorm:"Varchar(100);not null" json:"point"`
 	TotalPoint string    `gorm:"Varchar(100);not null" json:"total_point"`
 	CreatedAt  time.Time `json:"created_at"`

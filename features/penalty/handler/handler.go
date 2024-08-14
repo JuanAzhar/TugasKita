@@ -24,7 +24,7 @@ func New(penaltyUC entity.PenaltyUseCaseInterface, userUC user.UserUseCaseInterf
 }
 
 func (handler *PenaltyController) CreatePenalty(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -66,7 +66,7 @@ func (handler *PenaltyController) CreatePenalty(e echo.Context) error {
 }
 
 func (handler *PenaltyController) DeletePenalty(e echo.Context) error {
-	_, role, errRole := middleware.ExtractTokenUserId(e)
+	_, role, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -93,7 +93,7 @@ func (handler *PenaltyController) DeletePenalty(e echo.Context) error {
 }
 
 func (handler *PenaltyController) FindAllPenalty(e echo.Context) error {
-	_, role, errRole := middleware.ExtractTokenUserId(e)
+	_, role, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -179,7 +179,7 @@ func (handler *PenaltyController) FindSpecificPenalty(e echo.Context) error {
 }
 
 func (handler *PenaltyController) UpdatePenalty(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -222,7 +222,7 @@ func (handler *PenaltyController) UpdatePenalty(e echo.Context) error {
 }
 
 func (handler *PenaltyController) FindAllPenaltyHistory(e echo.Context) error {
-	userId, _, errRole := middleware.ExtractTokenUserId(e)
+	userId, _, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),

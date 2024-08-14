@@ -25,7 +25,7 @@ func New(rewardUC entity.RewardUseCaseInterface, userUC user.UserUseCaseInterfac
 }
 
 func (handler *RewardController) AddReward(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -141,7 +141,7 @@ func (handler *RewardController) ReadSpecificReward(e echo.Context) error {
 }
 
 func (handler *RewardController) DeleteReward(e echo.Context) error {
-	_, role, errRole := middleware.ExtractTokenUserId(e)
+	_, role, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -168,7 +168,7 @@ func (handler *RewardController) DeleteReward(e echo.Context) error {
 }
 
 func (handler *RewardController) UpdateReward(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -223,7 +223,7 @@ func (handler *RewardController) UpdateReward(e echo.Context) error {
 }
 
 func (handler *RewardController) FindAllRewardHistory(e echo.Context) error {
-	userId, _, err := middleware.ExtractTokenUserId(e)
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -264,7 +264,7 @@ func (handler *RewardController) FindAllRewardHistory(e echo.Context) error {
 }
 
 func (handler *RewardController) FindAllUploadReward(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -321,7 +321,7 @@ func (handler *RewardController) UploadRewardRequest(e echo.Context) error {
 		})
 	}
 
-	userId, _, errRole := middleware.ExtractTokenUserId(e)
+	userId, _, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -357,7 +357,7 @@ func (handler *RewardController) UploadRewardRequest(e echo.Context) error {
 }
 
 func (handler *RewardController) FindUserRewardById(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -403,7 +403,7 @@ func (handler *RewardController) FindUserRewardById(e echo.Context) error {
 }
 
 func (handler *RewardController) UpdateReqRewardStatus(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),

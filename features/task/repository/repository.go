@@ -597,3 +597,8 @@ func (taskRepo *TaskRepository) FindTaskByDateAndReligion(date string, religion 
 	}
 	return taskCores, nil
 }
+
+// FindAllReligionTask implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindAllReligionTask(religion string) ([]entity.ReligionTaskCore, error) {
+	panic("unimplemented")
+}

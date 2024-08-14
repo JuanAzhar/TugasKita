@@ -51,7 +51,7 @@ func (userRepo *userRepository) Login(email string, password string) (entity.Use
 
 	if tx.RowsAffected > 0 {
 		var errToken error
-		token, errToken = utils.CreateToken(data.ID, data.Role)
+		token, errToken = utils.CreateToken(data.ID, data.Role, data.Religion)
 		if errToken != nil {
 			return entity.UserCore{}, "", errToken
 		}

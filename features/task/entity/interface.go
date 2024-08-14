@@ -32,6 +32,8 @@ type TaskDataInterface interface {
 	UpdateTaskReligion(taskId string, data ReligionTaskCore) error
 	DeleteTaskReligion(taskId string) error
 	FindTaskByDateAndReligion(date string, religion string)([]ReligionTaskCore, error)
+
+	FindAllReligionTask(religion string)([]ReligionTaskCore, error)
 }
 
 type TaskUseCaseInterface interface {
@@ -61,4 +63,6 @@ type TaskUseCaseInterface interface {
 	FindByIdReligionTask(taskId string) (ReligionTaskCore, error)
 	UpdateTaskReligion(taskId string, data ReligionTaskCore) error
 	DeleteTaskReligion(taskId string) error
+
+	FindAllReligionTask(religion string)([]ReligionTaskCore, error)
 }

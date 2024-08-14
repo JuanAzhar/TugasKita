@@ -304,7 +304,7 @@ func (taskUC *taskService) CreateTaskReligion(input entity.ReligionTaskCore) err
 	}
 
 	// Kondisi khusus untuk agama Islam
-	if input.Religion == "Islam"  && input.Title == ""{
+	if input.Religion == "Islam" && input.Title == "" {
 		//cek apakah hari ini sudah upload atau belum
 		existingTasks, err := taskUC.TaskRepo.FindTaskByDateAndReligion(currentTime.Format(layout), "Islam")
 		if err != nil {
@@ -427,4 +427,9 @@ func (taskUC *taskService) UpdateTaskReligion(taskId string, data entity.Religio
 	}
 
 	return nil
+}
+
+// FindAllReligionTask implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllReligionTask(religion string) ([]entity.ReligionTaskCore, error) {
+	panic("unimplemented")
 }

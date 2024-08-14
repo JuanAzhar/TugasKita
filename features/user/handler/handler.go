@@ -91,6 +91,19 @@ func (handler *UserController) Login(e echo.Context) error {
 }
 
 func (handler *UserController) DeleteUser(e echo.Context) error {
+	_, role, _, errRole := middleware.ExtractTokenUserId(e)
+	if errRole != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": errRole.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
 	idParams := e.Param("id")
 	err := handler.userUsecase.DeleteUser(idParams)
 	if err != nil {
@@ -139,7 +152,7 @@ func (handler *UserController) ReadSpecificUser(e echo.Context) error {
 }
 
 func (handler *UserController) ReadProfileUser(e echo.Context) error {
-	userId, _, err := middleware.ExtractTokenUserId(e)
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -178,7 +191,7 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 }
 
 func (handler *UserController) ReadAllUser(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -219,7 +232,7 @@ func (handler *UserController) ReadAllUser(e echo.Context) error {
 }
 
 func (handler *UserController) UpdateSiswa(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -298,7 +311,7 @@ func (handler *UserController) GetRankUser(e echo.Context) error {
 }
 
 func (handler *UserController) ChangePassword(e echo.Context) error {
-	userId, _, err := middleware.ExtractTokenUserId(e)
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -330,7 +343,7 @@ func (handler *UserController) ChangePassword(e echo.Context) error {
 }
 
 func (handler *UserController) AnnualResetPoint(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -356,7 +369,7 @@ func (handler *UserController) AnnualResetPoint(e echo.Context) error {
 }
 
 func (handler *UserController) MonthlyResetPoint(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -382,7 +395,7 @@ func (handler *UserController) MonthlyResetPoint(e echo.Context) error {
 }
 
 func (handler *UserController) GetAllUserPointHistory(e echo.Context) error {
-	_, role, errRole := middleware.ExtractTokenUserId(e)
+	_, role, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -456,7 +469,7 @@ func (handler *UserController) GetSpecificUserPointHistory(e echo.Context) error
 }
 
 func (handler *UserController) GetUserPointHistory(e echo.Context) error {
-	userId, _, err := middleware.ExtractTokenUserId(e)
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),

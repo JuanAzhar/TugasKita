@@ -24,7 +24,7 @@ func New(taskUC entity.TaskUseCaseInterface, userUC user.UserUseCaseInterface) *
 }
 
 func (handler *TaskController) AddTask(e echo.Context) error {
-	userId, role, err := middleware.ExtractTokenUserId(e)
+	userId, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -68,7 +68,7 @@ func (handler *TaskController) AddTask(e echo.Context) error {
 }
 
 func (handler *TaskController) ReadAllTask(e echo.Context) error {
-	userId, role, err := middleware.ExtractTokenUserId(e)
+	userId, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -173,7 +173,7 @@ func (handler *TaskController) ReadSpecificTask(e echo.Context) error {
 }
 
 func (handler *TaskController) DeleteTask(e echo.Context) error {
-	_, role, errRole := middleware.ExtractTokenUserId(e)
+	_, role, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -201,7 +201,7 @@ func (handler *TaskController) DeleteTask(e echo.Context) error {
 }
 
 func (handler *TaskController) UpdateTask(e echo.Context) error {
-	adminId, role, err := middleware.ExtractTokenUserId(e)
+	adminId, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -247,7 +247,7 @@ func (handler *TaskController) UpdateTask(e echo.Context) error {
 }
 
 func (handler *TaskController) UpdateTaskStatus(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -295,7 +295,7 @@ func (handler *TaskController) UpdateTaskStatus(e echo.Context) error {
 }
 
 func (handler *TaskController) UpdateTaskReqStatus(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -345,7 +345,7 @@ func (handler *TaskController) UpdateTaskReqStatus(e echo.Context) error {
 }
 
 func (handler *TaskController) ReadHistoryTaskUser(e echo.Context) error {
-	userId, _, err := middleware.ExtractTokenUserId(e)
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -409,7 +409,7 @@ func (handler *TaskController) UploadTaskUser(e echo.Context) error {
 		})
 	}
 
-	userId, _, errRole := middleware.ExtractTokenUserId(e)
+	userId, _, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -438,7 +438,7 @@ func (handler *TaskController) UploadTaskUser(e echo.Context) error {
 }
 
 func (handler *TaskController) FindAllUserTask(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -488,7 +488,7 @@ func (handler *TaskController) FindAllUserTask(e echo.Context) error {
 }
 
 func (handler *TaskController) FindUserTaskById(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -535,7 +535,7 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 }
 
 func (handler *TaskController) FindUserTaskReqyId(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -589,7 +589,7 @@ func (handler *TaskController) UploadRequestTaskUser(e echo.Context) error {
 		})
 	}
 
-	userId, _, errRole := middleware.ExtractTokenUserId(e)
+	userId, _, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -631,7 +631,7 @@ func (handler *TaskController) UploadRequestTaskUser(e echo.Context) error {
 }
 
 func (handler *TaskController) FindAllUserRequestTask(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -680,7 +680,7 @@ func (handler *TaskController) FindAllUserRequestTask(e echo.Context) error {
 }
 
 func (handler *TaskController) FindAllRequestTaskHistory(e echo.Context) error {
-	userId, _, err := middleware.ExtractTokenUserId(e)
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -719,7 +719,7 @@ func (handler *TaskController) FindAllRequestTaskHistory(e echo.Context) error {
 }
 
 func (handler *TaskController) CountUserClearTask(e echo.Context) error {
-	userId, _, err := middleware.ExtractTokenUserId(e)
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -740,7 +740,7 @@ func (handler *TaskController) CountUserClearTask(e echo.Context) error {
 }
 
 func (handler *TaskController) AddReligionTask(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -784,7 +784,7 @@ func (handler *TaskController) AddReligionTask(e echo.Context) error {
 }
 
 func (handler *TaskController) ReadAllReligionTask(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -880,7 +880,7 @@ func (handler *TaskController) ReadSpecificReligionTask(e echo.Context) error {
 }
 
 func (handler *TaskController) DeleteReligionTask(e echo.Context) error {
-	_, role, errRole := middleware.ExtractTokenUserId(e)
+	_, role, _, errRole := middleware.ExtractTokenUserId(e)
 	if errRole != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": errRole.Error(),
@@ -908,7 +908,7 @@ func (handler *TaskController) DeleteReligionTask(e echo.Context) error {
 }
 
 func (handler *TaskController) UpdateReligionTask(e echo.Context) error {
-	_, role, err := middleware.ExtractTokenUserId(e)
+	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
