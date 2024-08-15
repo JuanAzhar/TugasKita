@@ -152,7 +152,7 @@ func (taskUC *taskService) UpdateTaskStatus(taskId string, data entity.UserTaskU
 
 	taskData, errData := taskUC.TaskRepo.FindUserTaskById(taskId)
 	if errData != nil {
-		return errors.New("religion task not found")
+		return errors.New("task not found")
 	}
 
 	if data.Status == taskData.Status {
@@ -175,7 +175,7 @@ func (taskUC *taskService) UpdateTaskReqStatus(id string, data entity.UserTaskSu
 
 	taskData, errData := taskUC.TaskRepo.FindUserTaskReqById(id)
 	if errData != nil {
-		return errors.New("religion task not found")
+		return errors.New("request task not found")
 	}
 
 	if data.Status == taskData.Status {
@@ -688,7 +688,7 @@ func (taskUC *taskService) UpdateTaskReligionReqStatus(id string, data entity.Us
 
 	taskData, errData := taskUC.TaskRepo.FindSpesificReligionTaskRequest(id)
 	if errData != nil {
-		return errors.New("religion task not found")
+		return errors.New("religion request task not found")
 	}
 
 	if data.Status == taskData.Status {
