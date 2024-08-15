@@ -78,3 +78,18 @@ type UserReligionTaskUploadCore struct {
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
+
+type UserReligionReqTaskCore struct {
+	Id          uuid.UUID `json:"id"`
+	Title       string    `json:"title"`
+	UserId      string    `json:"user_id"`
+	UserName    string    `json:"user_name"`
+	Image       string    `json:"image"`
+	Type        string    `json:"type"`
+	Description string    `json:"description"`
+	Point       int       `json:"point"`
+	Status      string    `json:"status"`
+	Message     string    `json:"message"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}

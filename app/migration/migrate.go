@@ -20,4 +20,5 @@ func InitMigration(db *gorm.DB) {
 	db.AutoMigrate(&penalty.Penalty{})
 	db.AutoMigrate(&task.ReligionTask{})
 	db.AutoMigrate(&task.UserReligionTaskUpload{})
+	db.AutoMigrate(&task.UserReligionReqTask{})
 }

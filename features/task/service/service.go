@@ -146,6 +146,19 @@ func (taskUC *taskService) UpdateTask(taskId string, data entity.TaskCore) error
 
 // UpdateTaskStatus implements entity.TaskUseCaseInterface.
 func (taskUC *taskService) UpdateTaskStatus(taskId string, data entity.UserTaskUploadCore) error {
+	if data.Status == "" {
+		return errors.New("status can't be empty")
+	}
+
+	taskData, errData := taskUC.TaskRepo.FindUserTaskById(taskId)
+	if errData != nil {
+		return errors.New("religion task not found")
+	}
+
+	if data.Status == taskData.Status {
+		return errors.New("you already updated this task to " + data.Status)
+	}
+
 	err := taskUC.TaskRepo.UpdateTaskStatus(taskId, data)
 	if err != nil {
 		return err
@@ -156,6 +169,19 @@ func (taskUC *taskService) UpdateTaskStatus(taskId string, data entity.UserTaskU
 
 // UpdateTaskReqStatus implements entity.TaskUseCaseInterface.
 func (taskUC *taskService) UpdateTaskReqStatus(id string, data entity.UserTaskSubmissionCore) error {
+	if data.Status == "" {
+		return errors.New("status can't be empty")
+	}
+
+	taskData, errData := taskUC.TaskRepo.FindUserTaskReqById(id)
+	if errData != nil {
+		return errors.New("religion task not found")
+	}
+
+	if data.Status == taskData.Status {
+		return errors.New("you already updated this task to " + data.Status)
+	}
+
 	err := taskUC.TaskRepo.UpdateTaskReqStatus(id, data)
 	if err != nil {
 		return err
@@ -581,16 +607,95 @@ func (taskUC *taskService) FindSpecificUserReligionTaskUpload(id string) (entity
 
 // UpdateReligionTaskStatus implements entity.TaskUseCaseInterface.
 func (taskUC *taskService) UpdateReligionTaskStatus(id string, data entity.UserReligionTaskUploadCore) error {
+	if data.Status == "" {
+		return errors.New("status can't be empty")
+	}
+
 	taskData, errData := taskUC.TaskRepo.FindSpecificUserReligionTaskUpload(data.Id.String())
 	if errData != nil {
 		return errors.New("religion task not found")
 	}
 
 	if data.Status == taskData.Status {
-		return errors.New("you already updated this task to " + taskData.Status)
+		return errors.New("you already updated this task to " + data.Status)
 	}
 
 	err := taskUC.TaskRepo.UpdateReligionTaskStatus(id, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// FindAllReligionTaskRequestHistory implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllReligionTaskRequestHistory(userId string) ([]entity.UserReligionReqTaskCore, error) {
+	data, err := taskUC.TaskRepo.FindAllReligionTaskRequestHistory(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// FindSpesificReligionTaskRequest implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindSpesificReligionTaskRequest(id string) (entity.UserReligionReqTaskCore, error) {
+	task, err := taskUC.TaskRepo.FindSpesificReligionTaskRequest(id)
+	if err != nil {
+		return entity.UserReligionReqTaskCore{}, err
+	}
+
+	return task, nil
+}
+
+// UploadReligionTaskRequest implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) UploadReligionTaskRequest(input entity.UserReligionReqTaskCore, image *multipart.FileHeader) error {
+	if input.Description == "" || input.Title == "" {
+		return errors.New("description and title can't empty")
+	}
+
+	if input.Point <= 0 {
+		return errors.New("point can't less then 0")
+	}
+
+	if image != nil && image.Size > 10*1024*1024 {
+		return errors.New("image file size should be less than 10 MB")
+	}
+
+	err := taskUC.TaskRepo.UploadReligionTaskRequest(input, image)
+	if err != nil {
+		return errors.New("failed upload religion request task")
+	}
+
+	return nil
+}
+
+// GetAllUserReligionTaskRequest implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) GetAllUserReligionTaskRequest() ([]entity.UserReligionReqTaskCore, error) {
+	userTask, err := taskUC.TaskRepo.GetAllUserReligionTaskRequest()
+	if err != nil {
+		return nil, errors.New("error get user religion request task")
+	}
+
+	return userTask, nil
+}
+
+// UpdateTaskReligionReqStatus implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) UpdateTaskReligionReqStatus(id string, data entity.UserReligionReqTaskCore) error {
+	if data.Status == "" {
+		return errors.New("status can't be empty")
+	}
+
+	taskData, errData := taskUC.TaskRepo.FindSpesificReligionTaskRequest(id)
+	if errData != nil {
+		return errors.New("religion task not found")
+	}
+
+	if data.Status == taskData.Status {
+		return errors.New("you already updated this task to " + data.Status)
+	}
+
+	err := taskUC.TaskRepo.UpdateTaskReligionReqStatus(id, data)
 	if err != nil {
 		return err
 	}

@@ -46,3 +46,12 @@ type ReligionTaskUploadRequest struct{
 	Status      string `json:"status"`
 	Message     string `json:"message"`
 }
+
+type UserReqReligionTaskRequest struct {
+	Title       string `json:"title" form:"title"`
+	Image       string `json:"image" form:"image"`
+	Description string `json:"description" form:"description"`
+	Point       int    `json:"point" form:"point"`
+	Status      string `json:"status" form:"status"`
+	Message     string `json:"message"`
+}

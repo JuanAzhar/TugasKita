@@ -194,3 +194,44 @@ func ReligionTaskUploadModelToReligionTaskUploadCore(data model.UserReligionTask
 		UpdatedAt:   time.Time{}, 
 	}
 }
+
+func ReligionTaskReqModelToReligionTaskReqCore(data model.UserReligionReqTask) UserReligionReqTaskCore{
+	return UserReligionReqTaskCore{
+		Id:          data.Id,
+		Title:       data.Title,
+		Point:       data.Point,
+		UserId:      data.UserId,
+		Image:       data.Image,
+		Description: data.Description,
+		Status:      data.Status,
+		Message:     data.Message,
+		Type:        data.Type,
+		CreatedAt:   time.Time{},
+		UpdatedAt:   time.Time{},
+	}
+}
+
+func ReligionTaskReqCoreToReligioinTaskReqModel(data UserReligionReqTaskCore) model.UserReligionReqTask{
+	return model.UserReligionReqTask{
+		Id:          data.Id,
+		Title:       data.Title,
+		Point:       data.Point,
+		UserId:      data.UserId,
+		Image:       data.Image,
+		Description: data.Description,
+		Status:      data.Status,
+		Message:     data.Message,
+		Type:        data.Type,
+		CreatedAt:   time.Time{},
+		UpdatedAt:   time.Time{},
+	}
+}
+
+func ListReligionReqTaskModelToReligionReqTaskCore(data []model.UserReligionReqTask) []UserReligionReqTaskCore {
+	dataTask := []UserReligionReqTaskCore{}
+	for _, v := range data {
+		result := ReligionTaskReqModelToReligionTaskReqCore(v)
+		dataTask = append(dataTask, result)
+	}
+	return dataTask
+}

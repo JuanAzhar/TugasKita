@@ -40,6 +40,13 @@ type TaskDataInterface interface {
 	FindAllUserReligionTaskUpload() ([]UserReligionTaskUploadCore, error)
 	FindSpecificUserReligionTaskUpload(userId string) (UserReligionTaskUploadCore, error)
 	UpdateReligionTaskStatus(id string, data UserReligionTaskUploadCore) error
+
+	UploadReligionTaskRequest(input UserReligionReqTaskCore, image *multipart.FileHeader) error
+	FindAllReligionTaskRequestHistory(userId string) ([]UserReligionReqTaskCore, error)
+	FindSpesificReligionTaskRequest(id string) (UserReligionReqTaskCore, error)
+
+	GetAllUserReligionTaskRequest()([]UserReligionReqTaskCore, error)
+	UpdateTaskReligionReqStatus(id string, data UserReligionReqTaskCore) error
 }
 
 type TaskUseCaseInterface interface {
@@ -77,4 +84,11 @@ type TaskUseCaseInterface interface {
 	FindAllUserReligionTaskUpload() ([]UserReligionTaskUploadCore, error)
 	FindSpecificUserReligionTaskUpload(id string) (UserReligionTaskUploadCore, error)
 	UpdateReligionTaskStatus(id string, data UserReligionTaskUploadCore) error
+
+	UploadReligionTaskRequest(input UserReligionReqTaskCore, image *multipart.FileHeader) error
+	FindAllReligionTaskRequestHistory(userId string) ([]UserReligionReqTaskCore, error)
+	FindSpesificReligionTaskRequest(id string) (UserReligionReqTaskCore, error)
+
+	GetAllUserReligionTaskRequest()([]UserReligionReqTaskCore, error)
+	UpdateTaskReligionReqStatus(id string, data UserReligionReqTaskCore) error
 }

@@ -996,7 +996,7 @@ func (handler *TaskController) ReligionTaskHistoryUser(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"message": "get all user task request",
+		"message": "get all user religion task history",
 		"data":    dataList,
 	})
 }
@@ -1128,7 +1128,7 @@ func (handler *TaskController) FindSpecificUserReligionTask(e echo.Context) erro
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"message": "get task",
+		"message": "get specific religion task",
 		"data":    response,
 	})
 }
@@ -1180,5 +1180,229 @@ func (handler *TaskController) UpdateReligionTaskStatus(e echo.Context) error {
 
 	return e.JSON(http.StatusOK, map[string]interface{}{
 		"message": "religion task status updated",
+	})
+}
+
+func (handler *TaskController) FindAllReligionTaskRequestHistory(e echo.Context) error {
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	data, err := handler.taskUsecase.FindAllReligionTaskRequestHistory(userId)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get religion task request history",
+		})
+	}
+
+	dataList := []entity.UserReligionReqTaskCore{}
+	for _, v := range data {
+
+		userData, _ := handler.userUsecase.ReadSpecificUser(v.UserId)
+
+		result := entity.UserReligionReqTaskCore{
+			Id:          v.Id,
+			UserId:      v.UserId,
+			UserName:    userData.Name,
+			Title:       v.Title,
+			Type:        v.Type,
+			Point:       v.Point,
+			Image:       v.Image,
+			Description: v.Description,
+			Status:      v.Status,
+			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all user task religion request",
+		"data":    dataList,
+	})
+}
+
+func (handler *TaskController) FindSpesificReligionTaskRequest(e echo.Context) error {
+	idParams := e.Param("id")
+
+	data, err := handler.taskUsecase.FindSpesificReligionTaskRequest(idParams)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get specific religion request task",
+		})
+	}
+
+	userData, _ := handler.userUsecase.ReadSpecificUser(data.UserId)
+
+	response := entity.UserReligionReqTaskCore{
+		Id:          data.Id,
+		UserId:      data.UserId,
+		UserName:    userData.Name,
+		Title:       data.Title,
+		Point:       data.Point,
+		Image:       data.Image,
+		Description: data.Description,
+		Status:      data.Status,
+		Type:        data.Type,
+		Message:     data.Message,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get spesific request task",
+		"data":    response,
+	})
+}
+
+func (handler *TaskController) UploadReligionTaskRequest(e echo.Context) error {
+	input := dto.UserReqReligionTaskRequest{}
+	errBind := e.Bind(&input)
+	if errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error bind data",
+		})
+	}
+
+	userId, _, _, errRole := middleware.ExtractTokenUserId(e)
+	if errRole != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": errRole.Error(),
+		})
+	}
+
+	image, err := e.FormFile("image")
+	if err != nil {
+		if err == http.ErrMissingFile {
+			return e.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": "No file uploaded",
+			})
+		}
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error uploading file",
+		})
+	}
+
+	dataInput := entity.UserReligionReqTaskCore{
+		Title:       input.Title,
+		Point:       input.Point,
+		Image:       input.Image,
+		Description: input.Description,
+	}
+	dataInput.UserId = userId
+
+	errUpload := handler.taskUsecase.UploadReligionTaskRequest(dataInput, image)
+	if errUpload != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error upload religion task request",
+			"error":   errUpload.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "succes upload religion task request",
+	})
+}
+
+func (handler *TaskController) GetAllUserReligionTaskRequest(e echo.Context) error{
+	_, role, _, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	data, err := handler.taskUsecase.GetAllUserReligionTaskRequest()
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get all user religion request task",
+		})
+	}
+
+	dataList := []entity.UserReligionReqTaskCore{}
+	for _, v := range data {
+
+		userData, _ := handler.userUsecase.ReadSpecificUser(v.UserId)
+
+		result := entity.UserReligionReqTaskCore{
+			Id:          v.Id,
+			Title:       v.Title,
+			Point:       v.Point,
+			UserId:      v.UserId,
+			UserName:    userData.Name,
+			Image:       v.Image,
+			Description: v.Description,
+			Status:      v.Status,
+			Type:        v.Type,
+			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+		dataList = append(dataList, result)
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all user religion request task",
+		"data":    dataList,
+	})
+}
+
+func (handler *TaskController) UpdateTaskReligionReqStatus(e echo.Context) error{
+	_, role, _, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
+
+	idParams := e.Param("id")
+
+	data := dto.UserReqReligionTaskRequest{}
+	if errBind := e.Bind(&data); errBind != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error binding data",
+		})
+	}
+
+	//get userId & taskId
+	dataTask, _ := handler.taskUsecase.FindSpesificReligionTaskRequest(idParams)
+
+	status := entity.UserReligionReqTaskCore{
+		UserId:      dataTask.UserId,
+		UserName:    dataTask.UserName,
+		Title:       data.Title,
+		Image:       data.Image,
+		Description: data.Description,
+		Point:       data.Point,
+		Status:      data.Status,
+		Message:     data.Message,
+	}
+
+	errUpdate := handler.taskUsecase.UpdateTaskReligionReqStatus(idParams, status)
+	if errUpdate != nil {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Error updating religion request task status",
+			"error":   errUpdate.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]interface{}{
+		"message": "religion task request status updated",
 	})
 }

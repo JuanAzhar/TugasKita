@@ -31,10 +31,14 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	user.GET("/req-riwayat", taskController.FindAllRequestTaskHistory, m.JWTMiddleware())
 	user.GET("/request/:id", taskController.FindUserTaskReqyId, m.JWTMiddleware())
 	
-	user.GET("/religion-task", taskController.FindAllReligionTaskUser, m.JWTMiddleware())
-	user.GET("/religion-task/:id", taskController.FindSpecificUserReligionTask, m.JWTMiddleware()) //belum tes
-	user.GET("/religion-task/history", taskController.ReligionTaskHistoryUser, m.JWTMiddleware())
-	user.POST("/religion-task", taskController.UploadTaskReligionUser, m.JWTMiddleware())
+	user.GET("/religion", taskController.FindAllReligionTaskUser, m.JWTMiddleware())
+	user.GET("/religion/:id", taskController.FindSpecificUserReligionTask, m.JWTMiddleware())
+	user.GET("/religion/history", taskController.ReligionTaskHistoryUser, m.JWTMiddleware())
+	user.POST("/religion", taskController.UploadTaskReligionUser, m.JWTMiddleware())
+
+	user.POST("/religion-req", taskController.UploadReligionTaskRequest, m.JWTMiddleware())
+	user.GET("/religion-req/history", taskController.FindAllReligionTaskRequestHistory, m.JWTMiddleware()) 
+	user.GET("/religion-req/history/:id", taskController.FindSpesificReligionTaskRequest, m.JWTMiddleware()) 
 	
 	user.GET("/sum-clear", taskController.CountUserClearTask, m.JWTMiddleware())
 	
@@ -61,4 +65,8 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	admin.GET("/religion/user", taskController.FindAllUserReligionTask, m.JWTMiddleware())
 	admin.GET("/religion/user/:id", taskController.FindSpecificUserReligionTask, m.JWTMiddleware())
 	admin.PUT("/religion/user/:id", taskController.UpdateReligionTaskStatus, m.JWTMiddleware())
+
+	admin.GET("/religion/user-req", taskController.GetAllUserReligionTaskRequest, m.JWTMiddleware())
+	admin.GET("/religion/user-req/:id", taskController.FindSpesificReligionTaskRequest, m.JWTMiddleware())
+	admin.PUT("/religion/user-req/:id", taskController.UpdateTaskReligionReqStatus, m.JWTMiddleware())
 }
