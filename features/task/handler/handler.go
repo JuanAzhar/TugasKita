@@ -487,19 +487,6 @@ func (handler *TaskController) FindAllUserTask(e echo.Context) error {
 }
 
 func (handler *TaskController) FindUserTaskById(e echo.Context) error {
-	_, role, _, err := middleware.ExtractTokenUserId(e)
-	if err != nil {
-		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
-	}
-
-	if role != "admin" {
-		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": "access denied",
-		})
-	}
-
 	idParams := e.Param("id")
 
 	data, err := handler.taskUsecase.FindUserTaskById(idParams)
@@ -534,19 +521,6 @@ func (handler *TaskController) FindUserTaskById(e echo.Context) error {
 }
 
 func (handler *TaskController) FindUserTaskReqyId(e echo.Context) error {
-	_, role, _, err := middleware.ExtractTokenUserId(e)
-	if err != nil {
-		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
-	}
-
-	if role != "admin" {
-		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": "access denied",
-		})
-	}
-
 	idParams := e.Param("id")
 
 	data, err := handler.taskUsecase.FindUserTaskReqById(idParams)
@@ -771,13 +745,13 @@ func (handler *TaskController) AddReligionTask(e echo.Context) error {
 	errTask := handler.taskUsecase.CreateTaskReligion(data)
 	if errTask != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": "error create task",
+			"message": "error create religion task",
 			"error":   errTask.Error(),
 		})
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
-		"message": "succes create task",
+		"message": "succes create religion task",
 	})
 }
 
@@ -1126,19 +1100,6 @@ func (handler *TaskController) FindAllUserReligionTask(e echo.Context) error {
 }
 
 func (handler *TaskController) FindSpecificUserReligionTask(e echo.Context) error {
-	_, role, _, err := middleware.ExtractTokenUserId(e)
-	if err != nil {
-		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
-	}
-
-	if role != "admin" {
-		return e.JSON(http.StatusBadRequest, map[string]any{
-			"message": "access denied",
-		})
-	}
-
 	idParams := e.Param("id")
 
 	data, err := handler.taskUsecase.FindSpecificUserReligionTaskUpload(idParams)

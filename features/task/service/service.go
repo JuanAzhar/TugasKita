@@ -314,6 +314,28 @@ func (taskUC *taskService) CreateTaskReligion(input entity.ReligionTaskCore) err
 			return errors.New("shalat 5 waktu sudah dibuat untuk hari ini")
 		}
 
+		dayData := time.Now().Weekday().String()
+		println(dayData)
+
+		if dayData == "Friday" {
+			//post shalat 5 waktu
+			prayers := []string{"Subuh", "Jum'at", "Ashar", "Maghrib", "Isya"}
+			for _, prayer := range prayers {
+				task := entity.ReligionTaskCore{
+					Title:       prayer,
+					Point:       250,
+					Religion:    input.Religion,
+					Start_date:  currentTime.Format(layout),
+					End_date:    currentTime.Format(layout),
+					Description: "Tugas Shalat " + prayer,
+				}
+				err := taskUC.TaskRepo.CreateTaskReligion(task)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
 		//post shalat 5 waktu
 		prayers := []string{"Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"}
 		for _, prayer := range prayers {
@@ -329,6 +351,72 @@ func (taskUC *taskService) CreateTaskReligion(input entity.ReligionTaskCore) err
 			if err != nil {
 				return err
 			}
+		}
+	} else if input.Religion == "Kristen" && input.Title == "" {
+		currentWeekday := time.Now().Weekday()
+
+		// Hitung jarak hari ke hari Minggu berikutnya
+		daysUntilSunday := (7 - int(currentWeekday))
+
+		// Jika hari ini bukan hari Minggu, tambahkan jarak hari ke tanggal saat ini
+		if daysUntilSunday != 0 {
+			currentTime = currentTime.AddDate(0, 0, daysUntilSunday)
+		}
+
+		//cek apakah hari ini sudah upload atau belum
+		existingTasks, errCheck := taskUC.TaskRepo.FindTaskByDateAndReligion(currentTime.Format(layout), "Kristen")
+		if errCheck != nil {
+			return errCheck
+		}
+
+		if len(existingTasks) > 0 {
+			return errors.New("ibadah minggu telah ditambahkan pada minggu ini")
+		}
+
+		task := entity.ReligionTaskCore{
+			Title:       "Ibadah Minggu",
+			Point:       300,
+			Religion:    input.Religion,
+			Start_date:  currentTime.Format(layout),
+			End_date:    currentTime.Format(layout),
+			Description: "Laksanakan ibadah minggu ke gereja",
+		}
+		err := taskUC.TaskRepo.CreateTaskReligion(task)
+		if err != nil {
+			return err
+		}
+	} else if input.Religion == "Katolik" && input.Title == "" {
+		currentWeekday := time.Now().Weekday()
+
+		// Hitung jarak hari ke hari Minggu berikutnya
+		daysUntilSunday := (7 - int(currentWeekday))
+
+		// Jika hari ini bukan hari Minggu, tambahkan jarak hari ke tanggal saat ini
+		if daysUntilSunday != 0 {
+			currentTime = currentTime.AddDate(0, 0, daysUntilSunday)
+		}
+
+		//cek apakah hari ini sudah upload atau belum
+		existingTasks, errCheck := taskUC.TaskRepo.FindTaskByDateAndReligion(currentTime.Format(layout), "Katolik")
+		if errCheck != nil {
+			return errCheck
+		}
+
+		if len(existingTasks) > 0 {
+			return errors.New("ibadah minggu telah ditambahkan pada minggu ini")
+		}
+
+		task := entity.ReligionTaskCore{
+			Title:       "Ibadah Minggu",
+			Point:       300,
+			Religion:    input.Religion,
+			Start_date:  currentTime.Format(layout),
+			End_date:    currentTime.Format(layout),
+			Description: "Laksanakan ibadah minggu ke gereja",
+		}
+		err := taskUC.TaskRepo.CreateTaskReligion(task)
+		if err != nil {
+			return err
 		}
 	} else {
 
@@ -498,7 +586,7 @@ func (taskUC *taskService) UpdateReligionTaskStatus(id string, data entity.UserR
 		return errors.New("religion task not found")
 	}
 
-	if data.Status == taskData.Status{
+	if data.Status == taskData.Status {
 		return errors.New("you already updated this task to " + taskData.Status)
 	}
 
