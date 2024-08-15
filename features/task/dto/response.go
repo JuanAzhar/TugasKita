@@ -23,32 +23,32 @@ type TaskResponseDetail struct {
 }
 
 type UserTaskUploadResponse struct {
-	Id          string
-	TaskId      string
-	TaskName    string
-	UserId      string
-	UserName    string
-	Image       string
-	Description string
-	Status      string
-	Message     string
+	Id          string `json:"id"`
+	TaskId      string `json:"task_id"`
+	TaskName    string `json:"task_name"`
+	UserId      string `json:"user_id"`
+	UserName    string `json:"user_name"`
+	Image       string `json:"image"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+	Message     string `json:"message"`
 }
 
 type UserReqTaksResponse struct {
-	Id          string
-	Title       string
-	UserId      string
-	UserName    string
-	Image       string
-	Description string
-	Point       int
-	Status      string
-	Message     string
+	Id          string `json:"id"`
+	Title       string `json:"title"`
+	UserId      string `json:"user_id"`
+	UserName    string `json:"user_name"`
+	Image       string `json:"image"`
+	Description string `json:"description"`
+	Point       int `json:"point"`
+	Status      string `json:"status"`
+	Message     string `json:"message"`
 }
 
 type ReligionTaskResponse struct {
-	Id       string
-	Title    string
-	Religion string
-	Point    int
+	Id       string `json:"id"`
+	Title    string `json:"title"`
+	Religion string `json:"religion"`
+	Point    int    `json:"point"`
 }

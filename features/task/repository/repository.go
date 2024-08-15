@@ -483,8 +483,9 @@ func (taskRepo *TaskRepository) FindAllRequestTask() ([]entity.UserTaskSubmissio
 func (taskRepo *TaskRepository) CountUserClearTask(id string) (int, error) {
 	var countUpload int64
 	var countSubmission int64
+	var countTask int64
 
-	// Menghitung jumlah data pada tabel UserTaskUpload dengan status 'Diterima'
+	// jumlah pada tabel UserTaskUpload
 	errUpload := taskRepo.db.Model(&model.UserTaskUpload{}).
 		Where("user_id = ? AND status = ?", id, "Diterima").
 		Count(&countUpload).Error
@@ -492,7 +493,7 @@ func (taskRepo *TaskRepository) CountUserClearTask(id string) (int, error) {
 		return 0, errUpload
 	}
 
-	// Menghitung jumlah data pada tabel UserTaskSubmission dengan status 'Diterima'
+	// jumlah pada tabel UserTaskSubmission
 	errSubmission := taskRepo.db.Model(&model.UserTaskSubmission{}).
 		Where("user_id = ? AND status = ?", id, "Diterima").
 		Count(&countSubmission).Error
@@ -500,8 +501,16 @@ func (taskRepo *TaskRepository) CountUserClearTask(id string) (int, error) {
 		return 0, errSubmission
 	}
 
+	// jumlah pada tabel UserReligionTaskUpload
+	errTask := taskRepo.db.Model(&model.UserReligionTaskUpload{}).
+		Where("user_id = ? AND status = ?", id, "Diterima").
+		Count(&countTask).Error
+	if errTask != nil {
+		return 0, errTask
+	}
+
 	// Menggabungkan hasil dari kedua tabel
-	totalCount := int(countUpload + countSubmission)
+	totalCount := int(countUpload + countSubmission + countTask)
 
 	return totalCount, nil
 }
@@ -599,14 +608,19 @@ func (taskRepo *TaskRepository) FindTaskByDateAndReligion(date string, religion 
 }
 
 // FindAllReligionTask implements entity.TaskDataInterface.
-func (taskRepo *TaskRepository) FindAllReligionTaskUser(religion string) ([]entity.ReligionTaskCore, error) {
+func (taskRepo *TaskRepository) FindAllReligionTaskUser(religion string, userId string) ([]entity.ReligionTaskCore, error) {
 	var religionTask []model.ReligionTask
 
-	// Dapatkan tanggal hari ini
 	currentTime := time.Now().Format("2006-01-02")
 
-	// Query untuk mendapatkan data dengan end_date lebih besar atau sama dengan tanggal hari ini
-	errData := taskRepo.db.Where("religion = ? AND end_date >= ?", religion, currentTime).Find(&religionTask).Error
+	errData := taskRepo.db.Raw(`
+	SELECT * FROM religion_tasks 
+	WHERE id NOT IN (
+		SELECT task_id FROM user_religion_task_uploads 
+		WHERE user_id = ? AND status != 'Ditolak'
+	) AND DATE(end_date) >= ?
+	AND religion = ?
+`, userId, currentTime, religion).Scan(&religionTask).Error
 	if errData != nil {
 		return nil, errData
 	}
@@ -626,4 +640,185 @@ func (taskRepo *TaskRepository) FindAllReligionTaskUser(religion string) ([]enti
 		}
 	}
 	return mapData, nil
+}
+
+// FindAllReligionTaskHistory implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindAllReligionTaskHistory(userId string) ([]entity.UserReligionTaskUploadCore, error) {
+	var task []model.UserReligionTaskUpload
+	taskRepo.db.Where("user_id=?", userId).Find(&task)
+
+	mapData := make([]entity.UserReligionTaskUploadCore, len(task))
+	for i, v := range task {
+
+		userData, _ := taskRepo.userRepository.ReadSpecificUser(userId)
+		taskData, _ := taskRepo.FindByIdReligionTask(v.TaskId)
+
+		mapData[i] = entity.UserReligionTaskUploadCore{
+			Id:          v.Id,
+			UserId:      v.UserId,
+			UserName:    userData.Name,
+			TaskId:      v.TaskId,
+			TaskName:    taskData.Title,
+			Image:       v.Image,
+			Description: v.Description,
+			Status:      v.Status,
+			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+	}
+	return mapData, nil
+}
+
+// UploadTaskReligion implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) UploadTaskReligion(input entity.UserReligionTaskUploadCore, image *multipart.FileHeader) error {
+	newUUID, UUIDerr := uuid.NewRandom()
+	if UUIDerr != nil {
+		return UUIDerr
+	}
+
+	file, err := image.Open()
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
+	if err != nil {
+		return err
+	}
+
+	input.Image = imageURL
+
+	var inputData = model.UserReligionTaskUpload{
+		Id:          newUUID,
+		UserId:      input.UserId,
+		Image:       input.Image,
+		TaskId:      input.TaskId,
+		Description: input.Description,
+		Status:      input.Status,
+		CreatedAt:   input.CreatedAt,
+		UpdatedAt:   input.UpdatedAt,
+	}
+
+	errUpload := taskRepo.db.Save(&inputData)
+	if errUpload != nil {
+		return errUpload.Error
+	}
+
+	return nil
+}
+
+// FindAllUserReligionTaskUpload implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindAllUserReligionTaskUpload() ([]entity.UserReligionTaskUploadCore, error) {
+	var userTask []model.UserReligionTaskUpload
+
+	errData := taskRepo.db.Find(&userTask).Error
+	if errData != nil {
+		return nil, errData
+	}
+
+	mapData := make([]entity.UserReligionTaskUploadCore, len(userTask))
+	for i, v := range userTask {
+		mapData[i] = entity.UserReligionTaskUploadCore{
+			Id:          v.Id,
+			TaskId:      v.TaskId,
+			UserId:      v.UserId,
+			Image:       v.Image,
+			Type:        v.Type,
+			Description: v.Description,
+			Status:      v.Status,
+			Message:     v.Message,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
+		}
+	}
+	return mapData, nil
+}
+
+// FindSpecificUserReligionTaskUpload implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindSpecificUserReligionTaskUpload(id string) (entity.UserReligionTaskUploadCore, error) {
+	var data model.UserReligionTaskUpload
+
+	errData := taskRepo.db.Where("id=?", id).First(&data).Error
+	if errData != nil {
+		return entity.UserReligionTaskUploadCore{}, errData
+	}
+
+	userData, _ := taskRepo.userRepository.ReadSpecificUser(data.UserId)
+	taskData, _ := taskRepo.FindByIdReligionTask(data.TaskId)
+
+	userCore := entity.UserReligionTaskUploadCore{
+		Id:          data.Id,
+		TaskId:      data.TaskId,
+		TaskName:    taskData.Title,
+		UserId:      data.UserId,
+		UserName:    userData.Name,
+		Type:        data.Type,
+		Message:     data.Message,
+		Image:       data.Image,
+		Description: data.Description,
+		Status:      data.Status,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
+	}
+
+	return userCore, nil
+}
+
+// UpdateReligionTaskStatus implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) UpdateReligionTaskStatus(id string, data entity.UserReligionTaskUploadCore) error {
+	var pointTask model.ReligionTask
+	var userData userModel.Users
+	taskData := entity.ReligionTaskUploadCoreToReligionTaskUploadModel(data)
+
+	// get user
+	errUser := taskRepo.db.Where("id=?", data.UserId).First(&userData).Error
+	if errUser != nil {
+		return errUser
+	}
+
+	// update status
+	tx := taskRepo.db.Where("id=?", data.Id).Updates(taskData)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	// get task data
+	errData := taskRepo.db.Where("id=?", id).First(&pointTask).Error
+	if errData != nil {
+		return errData
+	}
+
+	if taskData.Status == "Diterima" {
+		userPoint, _ := strconv.Atoi(userData.Point)
+		userTotalPoint, _ := strconv.Atoi(userData.TotalPoint)
+
+		count := userPoint + pointTask.Point
+		countTotal := userTotalPoint + pointTask.Point
+
+		userData.Point = strconv.Itoa(count)
+		userData.TotalPoint = strconv.Itoa(countTotal)
+
+		saveUser := user.UserModelToUserCore(userData)
+
+		updateUser := taskRepo.userRepository.UpdatePoint(data.UserId, saveUser)
+		if updateUser != nil {
+			return updateUser
+		}
+
+		//update history
+		historyData := user.UserPointCore{
+			UserId:   data.UserId,
+			Type:     "Religion",
+			Point:    pointTask.Point,
+			TaskName: pointTask.Title,
+		}
+		errUserHistory := taskRepo.userRepository.PostUserPointHistory(historyData)
+		if errUserHistory != nil {
+			return errors.New("failed add user history point")
+		}
+	}
+
+	return nil
 }

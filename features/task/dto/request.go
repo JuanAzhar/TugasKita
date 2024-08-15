@@ -37,3 +37,12 @@ type ReligionTaskRequest struct {
 	End_date    string `json:"end_date"`
 	Description string `json:"description"`
 }
+
+type ReligionTaskUploadRequest struct{
+	TaskId      string `json:"task_id" form:"task_id"`
+	UserId      string `json:"user_id"`
+	Image       string `json:"image" form:"image"`
+	Description string `json:"description" form:"description"`
+	Status      string `json:"status"`
+	Message     string `json:"message"`
+}

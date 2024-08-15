@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 	"tugaskita/features/reward/dto"
 	"tugaskita/features/reward/entity"
 	user "tugaskita/features/user/entity"
@@ -341,18 +340,8 @@ func (handler *RewardController) UploadRewardRequest(e echo.Context) error {
 			"error":   err.Error(),
 		})
 	}
-
-	amount := strconv.Itoa(input.Amount)
-
-	dataRespon := dto.RewardRequestResponse{
-		RewardId: input.RewardId,
-		UserId:   userId,
-		Amount:   amount,
-	}
-
 	return e.JSON(http.StatusOK, map[string]any{
 		"message": "succes upload request reward",
-		"data":    dataRespon,
 	})
 }
 

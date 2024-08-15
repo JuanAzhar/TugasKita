@@ -138,16 +138,20 @@ func ReligionTaskCoreToTaskModel(data ReligionTaskCore) model.ReligionTask {
 		Point:       data.Point,
 		Start_date:  data.Start_date,
 		End_date:    data.End_date,
+		CreatedAt:   time.Time{},
+		UpdatedAt:   time.Time{},
 	}
 
 }
 
 func ReligionTaskModelToTaskCore(data model.ReligionTask) ReligionTaskCore {
 	return ReligionTaskCore{
-		Id:       data.Id,
-		Title:    data.Title,
-		Religion: data.Religion,
-		Point:    data.Point,
+		Id:        data.Id,
+		Title:     data.Title,
+		Religion:  data.Religion,
+		Point:     data.Point,
+		CreatedAt: time.Time{},
+		UpdatedAt: time.Time{},
 	}
 
 }
@@ -159,4 +163,34 @@ func ListReligionTaskModelToReligionTaskCore(data []model.ReligionTask) []Religi
 		dataTask = append(dataTask, result)
 	}
 	return dataTask
+}
+
+func ReligionTaskUploadCoreToReligionTaskUploadModel(data UserReligionTaskUploadCore) model.UserReligionTaskUpload {
+	return model.UserReligionTaskUpload{
+		Id:          data.Id,
+		TaskId:      data.TaskId,
+		UserId:      data.UserId,
+		Image:       data.Image,
+		Type:        data.Type,
+		Description: data.Description,
+		Status:      data.Status,
+		Message:     data.Message,
+		CreatedAt:   time.Time{},
+		UpdatedAt:   time.Time{},
+	}
+}
+
+func ReligionTaskUploadModelToReligionTaskUploadCore(data model.UserReligionTaskUpload) UserReligionTaskUploadCore {
+	return UserReligionTaskUploadCore{
+		Id:          data.Id,
+		TaskId:      data.TaskId,
+		UserId:      data.UserId,
+		Image:       data.Image,
+		Type:        data.Type,
+		Description: data.Description,
+		Status:      data.Status,
+		Message:     data.Message,
+		CreatedAt:   time.Time{},
+		UpdatedAt:   time.Time{}, 
+	}
 }

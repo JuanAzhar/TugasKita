@@ -53,6 +53,7 @@ type ReligionTask struct {
 	Title       string
 	Description string
 	Religion    string
+	Type        string `gorm:"type:varchar(20);default:'Religion'" json:"type"`
 	Point       int
 	Start_date  string
 	End_date    string
@@ -65,8 +66,9 @@ type UserReligionTaskUpload struct {
 	TaskId      string
 	UserId      string
 	Image       string
+	Type        string `gorm:"type:varchar(20);default:'Religion'" json:"type"`
 	Description string
-	Status      string `gorm:"type:varchar(20);default:'Review'" json:"status"`
+	Status      string `gorm:"type:varchar(20);default:'Perlu Review'" json:"status"`
 	Message     string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time

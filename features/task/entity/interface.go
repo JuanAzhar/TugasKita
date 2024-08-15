@@ -24,16 +24,22 @@ type TaskDataInterface interface {
 	FindAllRequestTaskHistory(userId string) ([]UserTaskSubmissionCore, error)
 	FindTasksNotClaimedByUser(userId string) ([]TaskCore, error)
 
-	CountUserClearTask(id string)(int, error)
+	CountUserClearTask(id string) (int, error)
 
 	CreateTaskReligion(input ReligionTaskCore) error
 	FindAllTaskReligion() ([]ReligionTaskCore, error)
 	FindByIdReligionTask(taskId string) (ReligionTaskCore, error)
 	UpdateTaskReligion(taskId string, data ReligionTaskCore) error
 	DeleteTaskReligion(taskId string) error
-	FindTaskByDateAndReligion(date string, religion string)([]ReligionTaskCore, error)
+	FindTaskByDateAndReligion(date string, religion string) ([]ReligionTaskCore, error)
 
-	FindAllReligionTaskUser(religion string)([]ReligionTaskCore, error)
+	UploadTaskReligion(input UserReligionTaskUploadCore, image *multipart.FileHeader) error
+	FindAllReligionTaskUser(religion string, userId string) ([]ReligionTaskCore, error)
+	FindAllReligionTaskHistory(userId string) ([]UserReligionTaskUploadCore, error)
+
+	FindAllUserReligionTaskUpload() ([]UserReligionTaskUploadCore, error)
+	FindSpecificUserReligionTaskUpload(userId string) (UserReligionTaskUploadCore, error)
+	UpdateReligionTaskStatus(id string, data UserReligionTaskUploadCore) error
 }
 
 type TaskUseCaseInterface interface {
@@ -56,7 +62,7 @@ type TaskUseCaseInterface interface {
 	FindAllRequestTaskHistory(userId string) ([]UserTaskSubmissionCore, error)
 	FindTasksNotClaimedByUser(userId string) ([]TaskCore, error)
 
-	CountUserClearTask(id string)(int, error)
+	CountUserClearTask(id string) (int, error)
 
 	CreateTaskReligion(input ReligionTaskCore) error
 	FindAllTaskReligion() ([]ReligionTaskCore, error)
@@ -64,5 +70,11 @@ type TaskUseCaseInterface interface {
 	UpdateTaskReligion(taskId string, data ReligionTaskCore) error
 	DeleteTaskReligion(taskId string) error
 
-	FindAllReligionTaskUser(religion string)([]ReligionTaskCore, error)
+	UploadTaskReligion(input UserReligionTaskUploadCore, image *multipart.FileHeader) error
+	FindAllReligionTaskUser(religion string, userId string) ([]ReligionTaskCore, error)
+	FindAllReligionTaskHistory(userId string) ([]UserReligionTaskUploadCore, error)
+
+	FindAllUserReligionTaskUpload() ([]UserReligionTaskUploadCore, error)
+	FindSpecificUserReligionTaskUpload(id string) (UserReligionTaskUploadCore, error)
+	UpdateReligionTaskStatus(id string, data UserReligionTaskUploadCore) error
 }

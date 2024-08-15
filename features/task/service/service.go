@@ -293,7 +293,6 @@ func (taskUC *taskService) CountUserClearTask(id string) (int, error) {
 func (taskUC *taskService) CreateTaskReligion(input entity.ReligionTaskCore) error {
 	layout := "2006-01-02"
 	currentTime := time.Now().Truncate(24 * time.Hour)
-	tomorrow := currentTime.Add(24 * time.Hour)
 
 	if input.Point < 0 {
 		return errors.New("point must be more than 0")
@@ -323,7 +322,7 @@ func (taskUC *taskService) CreateTaskReligion(input entity.ReligionTaskCore) err
 				Point:       250,
 				Religion:    input.Religion,
 				Start_date:  currentTime.Format(layout),
-				End_date:    tomorrow.Format(layout),
+				End_date:    currentTime.Format(layout),
 				Description: "Tugas Shalat " + prayer,
 			}
 			err := taskUC.TaskRepo.CreateTaskReligion(task)
@@ -430,11 +429,83 @@ func (taskUC *taskService) UpdateTaskReligion(taskId string, data entity.Religio
 }
 
 // FindAllReligionTask implements entity.TaskUseCaseInterface.
-func (taskUC *taskService) FindAllReligionTaskUser(religion string) ([]entity.ReligionTaskCore, error) {
-	religionTask, err := taskUC.TaskRepo.FindAllReligionTaskUser(religion)
+func (taskUC *taskService) FindAllReligionTaskUser(religion string, userId string) ([]entity.ReligionTaskCore, error) {
+	religionTask, err := taskUC.TaskRepo.FindAllReligionTaskUser(religion, userId)
 	if err != nil {
 		return nil, errors.New("error get religion task")
 	}
 
 	return religionTask, nil
+}
+
+// FindAllReligionTaskHistory implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllReligionTaskHistory(userId string) ([]entity.UserReligionTaskUploadCore, error) {
+	data, err := taskUC.TaskRepo.FindAllReligionTaskHistory(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// UploadTaskReligion implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) UploadTaskReligion(input entity.UserReligionTaskUploadCore, image *multipart.FileHeader) error {
+	_, errTask := taskUC.TaskRepo.FindByIdReligionTask(input.TaskId)
+	if errTask != nil {
+		return errors.New("religion task not found")
+	}
+
+	if input.Description == "" {
+		return errors.New("description can't empty")
+	}
+
+	if image != nil && image.Size > 10*1024*1024 {
+		return errors.New("image file size should be less than 10 MB")
+	}
+
+	err := taskUC.TaskRepo.UploadTaskReligion(input, image)
+	if err != nil {
+		return errors.New("failed upload religion task")
+	}
+
+	return nil
+}
+
+// FindAllUserReligionTaskUpload implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindAllUserReligionTaskUpload() ([]entity.UserReligionTaskUploadCore, error) {
+	userTask, err := taskUC.TaskRepo.FindAllUserReligionTaskUpload()
+	if err != nil {
+		return nil, errors.New("error get user religion task data")
+	}
+
+	return userTask, nil
+}
+
+// FindSpecificUserReligionTaskUpload implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) FindSpecificUserReligionTaskUpload(id string) (entity.UserReligionTaskUploadCore, error) {
+	task, err := taskUC.TaskRepo.FindSpecificUserReligionTaskUpload(id)
+	if err != nil {
+		return entity.UserReligionTaskUploadCore{}, err
+	}
+
+	return task, nil
+}
+
+// UpdateReligionTaskStatus implements entity.TaskUseCaseInterface.
+func (taskUC *taskService) UpdateReligionTaskStatus(id string, data entity.UserReligionTaskUploadCore) error {
+	taskData, errData := taskUC.TaskRepo.FindSpecificUserReligionTaskUpload(data.Id.String())
+	if errData != nil {
+		return errors.New("religion task not found")
+	}
+
+	if data.Status == taskData.Status{
+		return errors.New("you already updated this task to " + taskData.Status)
+	}
+
+	err := taskUC.TaskRepo.UpdateReligionTaskStatus(id, data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

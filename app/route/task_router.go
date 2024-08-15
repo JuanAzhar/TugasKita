@@ -24,13 +24,17 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	user.GET("/:id", taskController.ReadSpecificTask, m.JWTMiddleware())
 	user.GET("", taskController.ReadAllTask, m.JWTMiddleware())
 	user.POST("", taskController.UploadTaskUser, m.JWTMiddleware())
-	user.POST("/request", taskController.UploadRequestTaskUser, m.JWTMiddleware())
 	user.GET("/riwayat", taskController.ReadHistoryTaskUser, m.JWTMiddleware())
+
+	user.POST("/request", taskController.UploadRequestTaskUser, m.JWTMiddleware())
 	user.GET("/req-riwayat", taskController.FindAllRequestTaskHistory, m.JWTMiddleware())
-	user.GET("/sum-clear", taskController.CountUserClearTask, m.JWTMiddleware())
-
+	
 	user.GET("/religion-task", taskController.FindAllReligionTaskUser, m.JWTMiddleware())
-
+	user.GET("/religion-task/history", taskController.ReligionTaskHistoryUser, m.JWTMiddleware())
+	user.POST("/religion-task", taskController.UploadTaskReligionUser, m.JWTMiddleware())
+	
+	user.GET("/sum-clear", taskController.CountUserClearTask, m.JWTMiddleware())
+	
 	admin := e.Group("/admin-task")
 	admin.GET("/:id", taskController.ReadSpecificTask, m.JWTMiddleware())
 	admin.PUT("/:id", taskController.UpdateTask, m.JWTMiddleware())
@@ -50,4 +54,8 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	admin.GET("/religion", taskController.ReadAllReligionTask, m.JWTMiddleware())
 	admin.POST("/religion", taskController.AddReligionTask, m.JWTMiddleware())
 	admin.DELETE("/religion/:id", taskController.DeleteReligionTask, m.JWTMiddleware())
+
+	admin.GET("/religion/user", taskController.FindAllUserReligionTask, m.JWTMiddleware())
+	admin.GET("/religion/user/:id", taskController.FindSpecificUserReligionTask, m.JWTMiddleware())
+	admin.PUT("/religion/user/:id", taskController.UpdateReligionTaskStatus, m.JWTMiddleware())
 }
