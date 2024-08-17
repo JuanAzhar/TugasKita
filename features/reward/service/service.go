@@ -96,7 +96,7 @@ func (rewardUC *RewardService) UpdateReward(rewardId string, data entity.RewardC
 		return errors.New("price and stock can't less then 0")
 	}
 
-	if image != nil && image.Size > 10*1024*1024 {
+	if image.Size > 10*1024*1024 {
 		return errors.New("image file size should be less than 10 MB")
 	}
 

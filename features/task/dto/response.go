@@ -41,7 +41,7 @@ type UserReqTaksResponse struct {
 	UserName    string `json:"user_name"`
 	Image       string `json:"image"`
 	Description string `json:"description"`
-	Point       int `json:"point"`
+	Point       int    `json:"point"`
 	Status      string `json:"status"`
 	Message     string `json:"message"`
 }
