@@ -161,30 +161,34 @@ func (userRepo *userRepository) ReadAllUser() ([]entity.UserCore, error) {
 func (userRepo *userRepository) UpdateSiswa(id string, data entity.UserCore, image *multipart.FileHeader) error {
 	dataUser := entity.UserCoreToUserModel(data)
 
-	file, err := image.Open()
-	if err != nil {
-		return err
+	// Jika gambar diunggah, lakukan upload ke Cloudinary
+	if image != nil {
+		file, err := image.Open()
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
+		if err != nil {
+			return err
+		}
+
+		dataUser.Image = imageURL
 	}
-	defer file.Close()
 
-	imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
-	if err != nil {
-		return err
+	// Hash password jika tidak kosong
+	if data.Password != "" {
+		hashPassword, err := bcrypt.HashPassword(data.Password)
+		if err != nil {
+			return err
+		}
+		dataUser.Password = hashPassword
 	}
 
-	hashPassword, err := bcrypt.HashPassword(data.Password)
-	if err != nil {
-		return err
-	}
-
-	dataUser.Image = imageURL
-	dataUser.Password = hashPassword
-
+	// Update data pengguna
 	tx := userRepo.db.Where("id = ?", id).Updates(&dataUser)
 	if tx.Error != nil {
-		if tx.Error != nil {
-			return tx.Error
-		}
 		return tx.Error
 	}
 
@@ -194,6 +198,7 @@ func (userRepo *userRepository) UpdateSiswa(id string, data entity.UserCore, ima
 
 	return nil
 }
+
 
 // UpdatePoint implements entity.UserDataInterface.
 func (userRepo *userRepository) UpdatePoint(id string, data entity.UserCore) error {

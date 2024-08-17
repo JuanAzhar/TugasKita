@@ -114,16 +114,24 @@ func (userUC *userUseCase) GetRankUser() ([]entity.UserCore, error) {
 
 // UpdateSiswa implements entity.UserUseCaseInterface.
 func (userUC *userUseCase) UpdateSiswa(id string, data entity.UserCore, image *multipart.FileHeader) error {
-	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-	match, _ := regexp.MatchString(emailRegex, data.Email)
-	if !match {
-		return errors.New("error. email format not valid")
+
+	// Validasi format email
+	if data.Email != "" {
+		emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+		match, _ := regexp.MatchString(emailRegex, data.Email)
+		if !match {
+			return errors.New("email format is not valid")
+		}
 	}
 
-	if image.Size > 10*1024*1024 {
-		return errors.New("image file size should be less than 10 MB")
+	// Validasi ukuran file gambar jika gambar diunggah
+	if image != nil {
+		if image.Size > 10*1024*1024 {
+			return errors.New("image file size should be less than 10 MB")
+		}
 	}
 
+	// Memanggil repository untuk mengupdate data siswa
 	err := userUC.userRepository.UpdateSiswa(id, data, image)
 	if err != nil {
 		return err

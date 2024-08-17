@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"mime/multipart"
 	"net/http"
 	dto "tugaskita/features/user/dto"
 	"tugaskita/features/user/entity"
@@ -270,27 +271,25 @@ func (handler *UserController) UpdateSiswa(e echo.Context) error {
 		})
 	}
 
-	image, err := e.FormFile("image")
-	if err != nil {
-		if err == http.ErrMissingFile {
-			return e.JSON(http.StatusBadRequest, map[string]interface{}{
-				"message": "No file uploaded",
-			})
-		}
+	// Menginisialisasi variabel untuk file gambar
+	var image *multipart.FileHeader
+	image, err = e.FormFile("image")
+	if err != nil && err != http.ErrMissingFile {
 		return e.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Error uploading file",
 		})
 	}
 
+	// Membuat objek userData tanpa menyertakan gambar
 	userData := entity.UserCore{
 		Name:     data.Name,
 		Email:    data.Email,
 		Password: data.Password,
-		Image:    data.Image,
 		Religion: data.Religion,
 		Point:    data.Point,
 	}
 
+	// Panggil fungsi UpdateSiswa di usecase, kirimkan image jika ada
 	errUpdate := handler.userUsecase.UpdateSiswa(idParams, userData, image)
 	if errUpdate != nil {
 		return e.JSON(http.StatusBadRequest, map[string]interface{}{
