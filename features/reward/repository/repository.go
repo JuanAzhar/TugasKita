@@ -99,18 +99,21 @@ func (rewardRepo *RewardRepository) FindById(rewardId string) (entity.RewardCore
 func (rewardRepo *RewardRepository) UpdateReward(rewardId string, data entity.RewardCore, image *multipart.FileHeader) error {
 	dataReward := entity.RewardCoreToRewardModel(data)
 
-	file, err := image.Open()
-	if err != nil {
-		return err
-	}
-	defer file.Close()
+	// Jika gambar diunggah, lakukan upload ke Cloudinary
+	if image != nil {
+		file, err := image.Open()
+		if err != nil {
+			return err
+		}
+		defer file.Close()
 
-	imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
-	if err != nil {
-		return err
-	}
+		imageURL, err := cloudinary.UploadToCloudinary(file, image.Filename)
+		if err != nil {
+			return err
+		}
 
-	dataReward.Image = imageURL
+		dataReward.Image = imageURL
+	}
 
 	tx := rewardRepo.db.Where("id = ?", rewardId).Updates(&dataReward)
 	if tx.Error != nil {

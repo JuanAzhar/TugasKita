@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"mime/multipart"
 	"net/http"
 	"tugaskita/features/reward/dto"
 	"tugaskita/features/reward/entity"
@@ -189,13 +190,10 @@ func (handler *RewardController) UpdateReward(e echo.Context) error {
 		})
 	}
 
-	image, err := e.FormFile("image")
-	if err != nil {
-		if err == http.ErrMissingFile {
-			return e.JSON(http.StatusBadRequest, map[string]interface{}{
-				"message": "No file uploaded",
-			})
-		}
+	// Menginisialisasi variabel untuk file gambar
+	var image *multipart.FileHeader
+	image, err = e.FormFile("image")
+	if err != nil && err != http.ErrMissingFile {
 		return e.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Error uploading file",
 		})
@@ -205,7 +203,6 @@ func (handler *RewardController) UpdateReward(e echo.Context) error {
 		Name:  data.Name,
 		Stock: data.Stock,
 		Price: data.Price,
-		Image: data.Image,
 	}
 
 	errUpdate := handler.rewardUsecase.UpdateReward(idParams, rewardData, image)
