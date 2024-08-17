@@ -5,6 +5,7 @@ type UserResponse struct {
 	Name       string `json:"name"`
 	Image      string `json:"image"`
 	Role       string `json:"role"`
+	Religion   string `json:"religion"`
 	Email      string `json:"email"`
 	Point      string `json:"point"`
 	TotalPoint string `json:"total_point"`

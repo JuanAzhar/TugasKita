@@ -80,6 +80,7 @@ func (userRepo *userRepository) ReadSpecificUser(id string) (user entity.UserCor
 		Name:       data.Name,
 		Email:      data.Email,
 		Image:      data.Image,
+		Religion:   data.Religion,
 		Point:      data.Point,
 		TotalPoint: data.TotalPoint,
 		Role:       data.Role,
@@ -117,6 +118,7 @@ func (userRepo *userRepository) Register(data entity.UserCore, image *multipart.
 		Name:     data.Name,
 		Image:    data.Image,
 		Email:    data.Email,
+		Religion: data.Religion,
 		Password: hashPassword,
 		Point:    "0",
 		Role:     "user",
@@ -147,6 +149,7 @@ func (userRepo *userRepository) ReadAllUser() ([]entity.UserCore, error) {
 			Email:      value.Email,
 			Image:      value.Image,
 			Role:       value.Role,
+			Religion:   value.Religion,
 			Point:      value.Point,
 			TotalPoint: value.TotalPoint,
 		}
@@ -305,7 +308,7 @@ func (userRepo *userRepository) PostUserPointHistory(data entity.UserPointCore) 
 
 	data.Id = newUUID.String()
 	dataUser := entity.UserPointCoreToUserPointModel(data)
-	
+
 	tx := userRepo.db.Create(&dataUser)
 	if tx.Error != nil {
 		return tx.Error

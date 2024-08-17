@@ -43,6 +43,7 @@ func (handler *UserController) Register(e echo.Context) error {
 	data := entity.UserCore{
 		Name:     input.Name,
 		Image:    input.Image,
+		Religion: input.Religion,
 		Email:    input.Email,
 		Password: input.Password,
 	}
@@ -118,6 +119,18 @@ func (handler *UserController) DeleteUser(e echo.Context) error {
 }
 
 func (handler *UserController) ReadSpecificUser(e echo.Context) error {
+	_, role, _, errRole := middleware.ExtractTokenUserId(e)
+	if errRole != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": errRole.Error(),
+		})
+	}
+
+	if role != "admin" {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "access denied",
+		})
+	}
 
 	idParamstr := e.Param("id")
 
@@ -139,6 +152,7 @@ func (handler *UserController) ReadSpecificUser(e echo.Context) error {
 		Id:         data.ID,
 		Name:       data.Name,
 		Role:       data.Role,
+		Religion:   data.Religion,
 		Email:      data.Email,
 		Image:      data.Image,
 		Point:      data.Point,
@@ -180,6 +194,7 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 		Name:       data.Name,
 		Image:      data.Image,
 		Email:      data.Email,
+		Religion:   data.Religion,
 		Point:      data.Point,
 		TotalPoint: data.TotalPoint,
 	}
@@ -219,6 +234,7 @@ func (handler *UserController) ReadAllUser(e echo.Context) error {
 			Image:      v.Image,
 			Email:      v.Email,
 			Role:       v.Role,
+			Religion:   v.Religion,
 			Point:      v.Point,
 			TotalPoint: v.TotalPoint,
 		}
@@ -271,6 +287,7 @@ func (handler *UserController) UpdateSiswa(e echo.Context) error {
 		Email:    data.Email,
 		Password: data.Password,
 		Image:    data.Image,
+		Religion: data.Religion,
 		Point:    data.Point,
 	}
 
@@ -407,7 +424,7 @@ func (handler *UserController) GetAllUserPointHistory(e echo.Context) error {
 			"message": "access denied",
 		})
 	}
-	
+
 	data, err := handler.userUsecase.GetAllUserPointHistory()
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
