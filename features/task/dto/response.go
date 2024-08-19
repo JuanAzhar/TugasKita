@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 type TaskResponse struct {
 	Id          string `json:"id"`
 	Title       string `json:"title"`
@@ -12,14 +14,16 @@ type TaskResponse struct {
 }
 
 type TaskResponseDetail struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Point       int    `json:"point"`
-	Message     string `json:"message"`
-	Type        string `json:"type"`
-	Status      string `json:"status"`
-	Start_date  string `json:"startDate"`
-	End_date    string `json:"endDate"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Point       int       `json:"point"`
+	Message     string    `json:"message"`
+	Type        string    `json:"type"`
+	Status      string    `json:"status"`
+	Start_date  string    `json:"startDate"`
+	End_date    string    `json:"endDate"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time    `json:"updated_at"`
 }
 
 type UserTaskUploadResponse struct {

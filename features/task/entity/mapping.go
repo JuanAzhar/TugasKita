@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"time"
 	"tugaskita/features/task/model"
 )
 
@@ -17,8 +16,8 @@ func TaskCoreToTaskModel(data TaskCore) model.Task {
 		Type:        data.Type,
 		Start_date:  data.Start_date,
 		End_date:    data.End_date,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 }
@@ -35,8 +34,8 @@ func TaskModelToTaskCore(data model.Task) TaskCore {
 		Type:        data.Type,
 		Start_date:  data.Start_date,
 		End_date:    data.End_date,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 }
@@ -59,8 +58,8 @@ func TaskUserModelToTaskUserCore(data model.UserTaskUpload) UserTaskUploadCore {
 		Description: data.Description,
 		Status:      data.Status,
 		Message:     data.Message,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 }
@@ -74,8 +73,8 @@ func TaskUserCoreToTaskUserModel(data UserTaskUploadCore) model.UserTaskUpload {
 		Description: data.Description,
 		Status:      data.Status,
 		Message:     data.Message,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 }
 
@@ -99,8 +98,8 @@ func TaskUserReqModelToTaskUserReqCore(data model.UserTaskSubmission) UserTaskSu
 		Status:      data.Status,
 		Message:     data.Message,
 		Type:        data.Type,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 }
 
@@ -115,8 +114,8 @@ func TaskUserReqCoreToTaskUserReqModel(data UserTaskSubmissionCore) model.UserTa
 		Status:      data.Status,
 		Message:     data.Message,
 		Type:        data.Type,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 }
 
@@ -134,24 +133,29 @@ func ReligionTaskCoreToTaskModel(data ReligionTaskCore) model.ReligionTask {
 		Id:          data.Id,
 		Title:       data.Title,
 		Description: data.Description,
+		Type:        data.Type,
 		Religion:    data.Religion,
 		Point:       data.Point,
 		Start_date:  data.Start_date,
 		End_date:    data.End_date,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.CreatedAt,
 	}
 
 }
 
 func ReligionTaskModelToTaskCore(data model.ReligionTask) ReligionTaskCore {
 	return ReligionTaskCore{
-		Id:        data.Id,
-		Title:     data.Title,
-		Religion:  data.Religion,
-		Point:     data.Point,
-		CreatedAt: time.Time{},
-		UpdatedAt: time.Time{},
+		Id:          data.Id,
+		Title:       data.Title,
+		Description: data.Description,
+		Type:        data.Type,
+		Start_date:  data.Start_date,
+		End_date:    data.End_date,
+		Point:       data.Point,
+		Religion:    data.Religion,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 }
@@ -175,8 +179,8 @@ func ReligionTaskUploadCoreToReligionTaskUploadModel(data UserReligionTaskUpload
 		Description: data.Description,
 		Status:      data.Status,
 		Message:     data.Message,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 }
 
@@ -190,12 +194,12 @@ func ReligionTaskUploadModelToReligionTaskUploadCore(data model.UserReligionTask
 		Description: data.Description,
 		Status:      data.Status,
 		Message:     data.Message,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{}, 
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 }
 
-func ReligionTaskReqModelToReligionTaskReqCore(data model.UserReligionReqTask) UserReligionReqTaskCore{
+func ReligionTaskReqModelToReligionTaskReqCore(data model.UserReligionReqTask) UserReligionReqTaskCore {
 	return UserReligionReqTaskCore{
 		Id:          data.Id,
 		Title:       data.Title,
@@ -206,12 +210,12 @@ func ReligionTaskReqModelToReligionTaskReqCore(data model.UserReligionReqTask) U
 		Status:      data.Status,
 		Message:     data.Message,
 		Type:        data.Type,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 }
 
-func ReligionTaskReqCoreToReligioinTaskReqModel(data UserReligionReqTaskCore) model.UserReligionReqTask{
+func ReligionTaskReqCoreToReligioinTaskReqModel(data UserReligionReqTaskCore) model.UserReligionReqTask {
 	return model.UserReligionReqTask{
 		Id:          data.Id,
 		Title:       data.Title,
@@ -222,8 +226,8 @@ func ReligionTaskReqCoreToReligioinTaskReqModel(data UserReligionReqTaskCore) mo
 		Status:      data.Status,
 		Message:     data.Message,
 		Type:        data.Type,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 }
 

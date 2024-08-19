@@ -32,6 +32,7 @@ type TaskDataInterface interface {
 	UpdateTaskReligion(taskId string, data ReligionTaskCore) error
 	DeleteTaskReligion(taskId string) error
 	FindTaskByDateAndReligion(date string, religion string) ([]ReligionTaskCore, error)
+	FindTaskByDateAndReligionNon(date string, religion string) ([]ReligionTaskCore, error)
 
 	UploadTaskReligion(input UserReligionTaskUploadCore, image *multipart.FileHeader) error
 	FindAllReligionTaskUser(religion string, userId string) ([]ReligionTaskCore, error)

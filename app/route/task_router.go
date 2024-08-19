@@ -32,7 +32,7 @@ func TaskRouter(db *gorm.DB, e *echo.Group) {
 	user.GET("/request/:id", taskController.FindUserTaskReqyId, m.JWTMiddleware())
 	
 	user.GET("/religion", taskController.FindAllReligionTaskUser, m.JWTMiddleware())
-	user.GET("/religion/:id", taskController.FindSpecificUserReligionTask, m.JWTMiddleware())
+	user.GET("/religion/:id", taskController.ReadSpecificReligionTask, m.JWTMiddleware())
 	user.GET("/religion/history", taskController.ReligionTaskHistoryUser, m.JWTMiddleware())
 	user.POST("/religion", taskController.UploadTaskReligionUser, m.JWTMiddleware())
 

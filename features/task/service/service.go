@@ -390,7 +390,7 @@ func (taskUC *taskService) CreateTaskReligion(input entity.ReligionTaskCore) err
 		}
 
 		//cek apakah hari ini sudah upload atau belum
-		existingTasks, errCheck := taskUC.TaskRepo.FindTaskByDateAndReligion(currentTime.Format(layout), "Kristen")
+		existingTasks, errCheck := taskUC.TaskRepo.FindTaskByDateAndReligionNon(currentTime.Format(layout), "Kristen")
 		if errCheck != nil {
 			return errCheck
 		}
@@ -423,7 +423,7 @@ func (taskUC *taskService) CreateTaskReligion(input entity.ReligionTaskCore) err
 		}
 
 		//cek apakah hari ini sudah upload atau belum
-		existingTasks, errCheck := taskUC.TaskRepo.FindTaskByDateAndReligion(currentTime.Format(layout), "Katolik")
+		existingTasks, errCheck := taskUC.TaskRepo.FindTaskByDateAndReligionNon(currentTime.Format(layout), "Katolik")
 		if errCheck != nil {
 			return errCheck
 		}

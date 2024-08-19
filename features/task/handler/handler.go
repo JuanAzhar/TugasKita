@@ -164,6 +164,8 @@ func (handler *TaskController) ReadSpecificTask(e echo.Context) error {
 		Status:      data.Status,
 		Start_date:  data.Start_date,
 		End_date:    data.End_date,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
@@ -771,13 +773,17 @@ func (handler *TaskController) ReadAllReligionTask(e echo.Context) error {
 			})
 		}
 
-		dataList := []dto.ReligionTaskResponse{}
+		dataList := []entity.ReligionTaskCore{}
 		for _, v := range data {
-			result := dto.ReligionTaskResponse{
-				Id:       v.Id.String(),
-				Title:    v.Title,
-				Point:    v.Point,
-				Religion: v.Religion,
+			result := entity.ReligionTaskCore{
+				Id:          v.Id,
+				Title:       v.Title,
+				Description: v.Description,
+				Type:        v.Type,
+				Start_date:  v.Start_date,
+				End_date:    v.End_date,
+				Point:       v.Point,
+				Religion:    v.Religion,
 			}
 			dataList = append(dataList, result)
 		}
@@ -838,11 +844,17 @@ func (handler *TaskController) ReadSpecificReligionTask(e echo.Context) error {
 		})
 	}
 
-	response := dto.ReligionTaskResponse{
-		Id:       data.Id.String(),
-		Title:    data.Title,
-		Religion: data.Religion,
-		Point:    data.Point,
+	response := entity.ReligionTaskCore{
+		Id:          data.Id,
+		Title:       data.Title,
+		Description: data.Description,
+		Type:        data.Type,
+		Start_date:  data.Start_date,
+		End_date:    data.End_date,
+		Point:       data.Point,
+		Religion:    data.Religion,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
 	}
 
 	return e.JSON(http.StatusOK, map[string]any{
@@ -1308,7 +1320,7 @@ func (handler *TaskController) UploadReligionTaskRequest(e echo.Context) error {
 	})
 }
 
-func (handler *TaskController) GetAllUserReligionTaskRequest(e echo.Context) error{
+func (handler *TaskController) GetAllUserReligionTaskRequest(e echo.Context) error {
 	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{
@@ -1357,7 +1369,7 @@ func (handler *TaskController) GetAllUserReligionTaskRequest(e echo.Context) err
 	})
 }
 
-func (handler *TaskController) UpdateTaskReligionReqStatus(e echo.Context) error{
+func (handler *TaskController) UpdateTaskReligionReqStatus(e echo.Context) error {
 	_, role, _, err := middleware.ExtractTokenUserId(e)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]any{

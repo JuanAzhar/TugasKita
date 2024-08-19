@@ -595,7 +595,22 @@ func (taskRepo *TaskRepository) UpdateTaskReligion(taskId string, data entity.Re
 // FindTaskByDateAndReligion implements entity.TaskDataInterface.
 func (taskRepo *TaskRepository) FindTaskByDateAndReligion(date string, religion string) ([]entity.ReligionTaskCore, error) {
 	var tasks []model.ReligionTask
-	err := taskRepo.db.Where("start_date = ? AND religion = ?", date, religion).Find(&tasks).Error
+	err := taskRepo.db.Where("start_date = ? AND religion = ? AND title = ?", date, religion, "Subuh").Find(&tasks).Error
+	if err != nil {
+		return nil, err
+	}
+
+	var taskCores []entity.ReligionTaskCore
+	for _, task := range tasks {
+		taskCores = append(taskCores, entity.ReligionTaskModelToTaskCore(task))
+	}
+	return taskCores, nil
+}
+
+// FindTaskByDateAndReligionNon implements entity.TaskDataInterface.
+func (taskRepo *TaskRepository) FindTaskByDateAndReligionNon(date string, religion string) ([]entity.ReligionTaskCore, error) {
+	var tasks []model.ReligionTask
+	err := taskRepo.db.Where("start_date = ? AND religion = ? AND title = ?", date, religion, "Ibadah Minggu").Find(&tasks).Error
 	if err != nil {
 		return nil, err
 	}
