@@ -129,8 +129,13 @@ func (userRepo *userRepository) Register(data entity.UserCore, image *multipart.
 		Religion: data.Religion,
 		Password: hashPassword,
 		Point:    "0",
+		TotalPoint: "0",
 		Role:     "user",
 	}
+
+	println(input.Address)
+	println(input.School)
+	println(input.Class)
 
 	erruser := userRepo.db.Save(&input)
 	if erruser.Error != nil {
