@@ -176,3 +176,13 @@ func (penaltyUC *PenaltyService) FindAllPenaltyHistory(id string) ([]entity.Pena
 
 	return data, nil
 }
+
+// GetTotalPenalty implements entity.PenaltyUseCaseInterface.
+func (penaltyUC *PenaltyService) GetTotalPenalty(id string) (int, error) {
+	penalty, err := penaltyUC.PenaltyRepo.GetTotalPenalty(id)
+	if err != nil {
+		return 0, errors.New("error count user penalty")
+	}
+
+	return penalty, nil
+}

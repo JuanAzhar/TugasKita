@@ -8,6 +8,7 @@ type PenaltyDataInterface interface {
 	DeletePenalty(id string) error
 
 	FindAllPenaltyHistory(id string)([]PenaltyCore, error)
+	GetTotalPenalty(id string)(int,error)
 }
 
 type PenaltyUseCaseInterface interface {
@@ -18,4 +19,5 @@ type PenaltyUseCaseInterface interface {
 	DeletePenalty(id string) error
 
 	FindAllPenaltyHistory(id string)([]PenaltyCore, error)
+	GetTotalPenalty(id string)(int,error)
 }

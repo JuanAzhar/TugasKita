@@ -31,4 +31,5 @@ func PenaltyRouter(db *gorm.DB, e *echo.Group) {
 	user.GET("/:id", penaltyController.FindSpecificPenalty, m.JWTMiddleware())
 	user.GET("/history", penaltyController.FindAllPenaltyHistory, m.JWTMiddleware())
 
+	e.GET("/sum-penalty", penaltyController.CountUserPenalty, m.JWTMiddleware())
 }

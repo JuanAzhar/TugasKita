@@ -78,12 +78,17 @@ func (userRepo *userRepository) ReadSpecificUser(id string) (user entity.UserCor
 	userCore := entity.UserCore{
 		ID:         data.ID,
 		Name:       data.Name,
+		Address:    data.Address,
+		School:     data.School,
+		Class:      data.Class,
 		Email:      data.Email,
 		Image:      data.Image,
 		Religion:   data.Religion,
 		Point:      data.Point,
 		TotalPoint: data.TotalPoint,
 		Role:       data.Role,
+		CreatedAt:  data.CreatedAt,
+		UpdatedAt:  data.UpdatedAt,
 	}
 
 	return userCore, nil
@@ -117,6 +122,9 @@ func (userRepo *userRepository) Register(data entity.UserCore, image *multipart.
 		ID:       newUUID.String(),
 		Name:     data.Name,
 		Image:    data.Image,
+		Address:  data.Address,
+		School:   data.School,
+		Class:    data.Class,
 		Email:    data.Email,
 		Religion: data.Religion,
 		Password: hashPassword,
@@ -147,6 +155,9 @@ func (userRepo *userRepository) ReadAllUser() ([]entity.UserCore, error) {
 			ID:         value.ID,
 			Name:       value.Name,
 			Email:      value.Email,
+			Address:    value.Address,
+			School:     value.School,
+			Class:      value.Class,
 			Image:      value.Image,
 			Role:       value.Role,
 			Religion:   value.Religion,
@@ -198,7 +209,6 @@ func (userRepo *userRepository) UpdateSiswa(id string, data entity.UserCore, ima
 
 	return nil
 }
-
 
 // UpdatePoint implements entity.UserDataInterface.
 func (userRepo *userRepository) UpdatePoint(id string, data entity.UserCore) error {

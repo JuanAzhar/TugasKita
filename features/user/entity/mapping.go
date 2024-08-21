@@ -6,6 +6,9 @@ func UserCoreToUserModel(data UserCore) model.Users {
 	return model.Users{
 		ID:         data.ID,
 		Name:       data.Name,
+		Address:    data.Address,
+		School:     data.School,
+		Class:      data.Class,
 		Email:      data.Email,
 		Password:   data.Password,
 		Role:       data.Role,
@@ -18,6 +21,9 @@ func UserModelToUserCore(data model.Users) UserCore {
 	return UserCore{
 		ID:         data.ID,
 		Name:       data.Name,
+		Address:    data.Address,
+		School:     data.School,
+		Class:      data.Class,
 		Email:      data.Email,
 		Password:   data.Password,
 		Role:       data.Role,
@@ -50,7 +56,7 @@ func UserPointModelToUserPointCore(data model.UserPoint) UserPointCore {
 	}
 }
 
-func ListUserPointModelToListUserPointCore(data []model.UserPoint) []UserPointCore{
+func ListUserPointModelToListUserPointCore(data []model.UserPoint) []UserPointCore {
 	dataUser := []UserPointCore{}
 	for _, v := range data {
 		result := UserPointModelToUserPointCore(v)

@@ -119,3 +119,17 @@ func (penaltyRepo *PenaltyRepository) FindAllPenaltyHistory(id string) ([]entity
 	datapPenalty := entity.ListPenaltyModelToListPenaltyCore(penalty)
 	return datapPenalty, nil
 }
+
+// GetTotalPenalty implements entity.PenaltyDataInterface.
+func (penaltyRepo *PenaltyRepository) GetTotalPenalty(id string) (int, error) {
+	var count int64
+
+	errPenalty := penaltyRepo.db.Model(&model.Penalty{}).
+	Where("user_id = ?", id).
+	Count(&count).Error
+	if errPenalty != nil {
+		return 0, errPenalty
+	}
+
+	return int(count), nil
+}

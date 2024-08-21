@@ -44,6 +44,9 @@ func (handler *UserController) Register(e echo.Context) error {
 	data := entity.UserCore{
 		Name:     input.Name,
 		Image:    input.Image,
+		Address:  input.Address,
+		School:   input.School,
+		Class:    input.Class,
 		Religion: input.Religion,
 		Email:    input.Email,
 		Password: input.Password,
@@ -152,6 +155,9 @@ func (handler *UserController) ReadSpecificUser(e echo.Context) error {
 	response := dto.UserResponse{
 		Id:         data.ID,
 		Name:       data.Name,
+		Address:    data.Address,
+		School:     data.School,
+		Class:      data.Class,
 		Role:       data.Role,
 		Religion:   data.Religion,
 		Email:      data.Email,
@@ -193,6 +199,9 @@ func (handler *UserController) ReadProfileUser(e echo.Context) error {
 	response := dto.UserResponse{
 		Id:         data.ID,
 		Name:       data.Name,
+		Address:    data.Address,
+		School:     data.School,
+		Class:      data.Class,
 		Image:      data.Image,
 		Email:      data.Email,
 		Religion:   data.Religion,
@@ -232,6 +241,9 @@ func (handler *UserController) ReadAllUser(e echo.Context) error {
 		result := dto.UserResponse{
 			Id:         v.ID,
 			Name:       v.Name,
+			Address:    v.Address,
+			School:     v.School,
+			Class:      v.Class,
 			Image:      v.Image,
 			Email:      v.Email,
 			Role:       v.Role,
@@ -284,6 +296,9 @@ func (handler *UserController) UpdateSiswa(e echo.Context) error {
 	userData := entity.UserCore{
 		Name:     data.Name,
 		Email:    data.Email,
+		Address:  data.Address,
+		School:   data.School,
+		Class:    data.Class,
 		Password: data.Password,
 		Religion: data.Religion,
 		Point:    data.Point,

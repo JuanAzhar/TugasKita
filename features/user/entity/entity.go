@@ -5,6 +5,9 @@ import "time"
 type UserCore struct {
 	ID         string    `json:"id"`
 	Name       string    `json:"username"`
+	Address    string    `json:"address"`
+	School     string    `json:"school"`
+	Class      string    `json:"class"`
 	Image      string    `json:"image"`
 	Email      string    `json:"email"`
 	Password   string    `json:"password"`

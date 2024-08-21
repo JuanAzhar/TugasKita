@@ -259,3 +259,24 @@ func (handler *PenaltyController) FindAllPenaltyHistory(e echo.Context) error {
 		"data":    dataList,
 	})
 }
+
+func (handler *PenaltyController) CountUserPenalty(e echo.Context) error {
+	userId, _, _, err := middleware.ExtractTokenUserId(e)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": err.Error(),
+		})
+	}
+
+	count, err := handler.penaltyUsecase.GetTotalPenalty(userId)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get penalty sum " + err.Error(),
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get all task cleared sum",
+		"count":   count,
+	})
+}
